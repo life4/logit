@@ -1,12 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"os"
 
 	"github.com/orsinium-labs/logit/logit"
-	"github.com/sirupsen/logrus"
 )
 
 func main() {
@@ -19,7 +19,15 @@ func main() {
 		os.Exit(1)
 	}
 
-	log.WithFields(logrus.Fields{
-		"animal": "walrus",
-	}).Info("A walrus appears")
+	scanner := bufio.NewScanner(os.Stdin)
+	for scanner.Scan() {
+		line := scanner.Text()
+		entry, err := logit.ParseEntry(log, line)
+		if err != nil {
+			err = fmt.Errorf("cannot parse entry: %v", err)
+			log.WithError(err).Error(err)
+		}
+		entry.Log(entry.Level, entry.Message)
+	}
+
 }
