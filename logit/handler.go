@@ -8,25 +8,30 @@ import (
 )
 
 type Handler struct {
+	hook      logrus.Hook
 	formatter logrus.Formatter
 	stream    io.Writer
 	levelFrom logrus.Level
 	levelTo   logrus.Level
 }
 
-func (h Handler) Log(entry *logrus.Entry) error {
-	if entry.Level < h.levelTo {
+func (handler Handler) Log(entry *logrus.Entry) error {
+	if entry.Level < handler.levelTo {
 		return nil
 	}
-	if entry.Level > h.levelFrom {
+	if entry.Level > handler.levelFrom {
 		return nil
 	}
 
-	serialized, err := h.formatter.Format(entry)
+	if handler.hook != nil {
+		return handler.hook.Fire(entry)
+	}
+
+	serialized, err := handler.formatter.Format(entry)
 	if err != nil {
 		return fmt.Errorf("cannot format: %v", err)
 	}
-	_, err = h.stream.Write(serialized)
+	_, err = handler.stream.Write(serialized)
 	if err != nil {
 		return fmt.Errorf("cannot write to log: %v", err)
 	}

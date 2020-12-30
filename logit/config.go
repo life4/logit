@@ -2,7 +2,6 @@ package logit
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/BurntSushi/toml"
 	"github.com/sirupsen/logrus"
@@ -14,8 +13,6 @@ type CMain struct {
 
 type CHandler struct {
 	Formatter string
-	LevelFrom string `toml:"level_from"`
-	LevelTo   string `toml:"level_to"`
 }
 
 // RawConfig represents the struct to parse TOML config into.
@@ -74,40 +71,22 @@ func parseFormatter(meta toml.MetaData, primitive toml.Primitive) (*Handler, err
 		return nil, err
 	}
 
-	var f logrus.Formatter
 	switch config.Formatter {
 	case "text":
-		fconf := NewFText()
+		fconf := NewTextHandler()
 		err = meta.PrimitiveDecode(primitive, &fconf)
 		if err != nil {
 			return nil, err
 		}
-		f, err = fconf.Parse()
+		return fconf.Parse()
 	case "json":
-		fconf := NewFJSON()
+		fconf := NewJSONHandler()
 		err = meta.PrimitiveDecode(primitive, &fconf)
 		if err != nil {
 			return nil, err
 		}
-		f, err = fconf.Parse()
+		return fconf.Parse()
 	default:
 		return nil, fmt.Errorf("unknown formatter: %s", config.Formatter)
 	}
-	if err != nil {
-		return nil, err
-	}
-
-	handler := Handler{
-		formatter: f,
-		stream:    os.Stdout,
-	}
-	handler.levelFrom, err = logrus.ParseLevel(config.LevelFrom)
-	if err != nil {
-		return nil, fmt.Errorf("cannot parse level_from: %v", err)
-	}
-	handler.levelTo, err = logrus.ParseLevel(config.LevelTo)
-	if err != nil {
-		return nil, fmt.Errorf("cannot parse level_to: %v", err)
-	}
-	return &handler, nil
 }

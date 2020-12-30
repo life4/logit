@@ -1,24 +1,30 @@
 package logit
 
 import (
+	"os"
+
 	"github.com/sirupsen/logrus"
 )
 
-type FText struct {
+type TextHandler struct {
 	Colors    bool
 	Timestamp string
 	Sort      bool
+	LevelFrom Level `toml:"level_from"`
+	LevelTo   Level `toml:"level_to"`
 }
 
-func NewFText() FText {
-	return FText{
+func NewTextHandler() TextHandler {
+	return TextHandler{
 		Colors:    true,
 		Timestamp: "YYYY-MM-dd HH:mm:ss",
 		Sort:      true,
+		LevelFrom: TraceLevel,
+		LevelTo:   PanicLevel,
 	}
 }
 
-func (config FText) Parse() (*logrus.TextFormatter, error) {
+func (config TextHandler) Parse() (*Handler, error) {
 	f := logrus.TextFormatter{
 		ForceColors:     config.Colors,
 		DisableColors:   !config.Colors,
@@ -26,5 +32,11 @@ func (config FText) Parse() (*logrus.TextFormatter, error) {
 		FullTimestamp:   true,
 		TimestampFormat: convertDateFormat(config.Timestamp),
 	}
-	return &f, nil
+	h := Handler{
+		formatter: &f,
+		stream:    os.Stdout,
+		levelFrom: config.LevelFrom.Level,
+		levelTo:   config.LevelTo.Level,
+	}
+	return &h, nil
 }
