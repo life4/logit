@@ -29,12 +29,23 @@ func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
 		line := scanner.Text()
+
+		// parse
 		entry, err := log.Parse(line)
 		if err != nil {
 			err = fmt.Errorf("cannot parse entry: %v", err)
-			log.LogError(err, line)
+			err = log.LogError(err, line)
+			if err != nil {
+				fmt.Println(err)
+			}
+			continue
 		}
-		log.Log(entry)
+
+		// log
+		err = log.Log(entry)
+		if err != nil {
+			fmt.Println(err)
+		}
 	}
 
 }
