@@ -3,6 +3,7 @@ package logit
 import (
 	"fmt"
 
+	"github.com/BurntSushi/toml"
 	"github.com/sirupsen/logrus"
 )
 
@@ -42,6 +43,23 @@ func NewConfig() Config {
 		},
 	}
 	return c
+}
+
+func ReadConfig(cpath string) (*Config, error) {
+	config := NewConfig()
+	if cpath == "" {
+		return &config, nil
+	}
+
+	meta, err := toml.DecodeFile(cpath, &config)
+	if err != nil {
+		return nil, fmt.Errorf("cannot read config: %v", err)
+	}
+	undecoded := meta.Undecoded()
+	if len(undecoded) != 0 {
+		return nil, fmt.Errorf("unknown fields: %v", undecoded)
+	}
+	return &config, nil
 }
 
 func (c *Config) Formatter() (logrus.Formatter, error) {

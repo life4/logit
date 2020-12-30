@@ -13,7 +13,14 @@ func main() {
 	var cpath string
 	flag.StringVar(&cpath, "", "logit.toml", "")
 	flag.Parse()
-	log, err := logit.NewLogger(cpath)
+
+	config, err := logit.ReadConfig(cpath)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	log, err := logit.NewLogger(config)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
