@@ -8,52 +8,42 @@ import (
 )
 
 type CMain struct {
-	Level     string
-	Formatter string
+	DefaultLevel string `toml:"default_level"`
 }
-
-// type cLevels struct {
-// 	Panic   string
-// 	Fatal   string
-// 	Warning string
-// 	Info    string
-// 	Debug   string
-// 	Trace   string
-// }
 
 type CHandler struct {
 	Formatter string
 }
 
-type Config struct {
+// RawConfig represents the struct to parse TOML config into.
+type RawConfig struct {
 	Main        CMain
 	HandlersRaw []toml.Primitive `toml:"handler"`
-	Formatters  []logrus.Formatter
 }
 
-func NewConfig() Config {
-	c := Config{
-		Main: CMain{
-			Level:     "trace",
-			Formatter: "text",
-		},
-	}
-	return c
+// RawConfig represents the config how it is used internally.
+// It is generated from RawConfig.
+type Config struct {
+	DefaultLevel logrus.Level
+	Formatters   []logrus.Formatter
 }
 
 func ReadConfig(cpath string) (*Config, error) {
-	config := NewConfig()
-	if cpath == "" {
-		return &config, nil
+	raw := RawConfig{
+		Main: CMain{
+			DefaultLevel: "ERROR",
+		},
 	}
 
-	meta, err := toml.DecodeFile(cpath, &config)
+	meta, err := toml.DecodeFile(cpath, &raw)
 	if err != nil {
 		return nil, fmt.Errorf("cannot read config: %v", err)
 	}
 
-	config.Formatters = make([]logrus.Formatter, len(config.HandlersRaw))
-	for i, primitive := range config.HandlersRaw {
+	config := Config{
+		Formatters: make([]logrus.Formatter, len(raw.HandlersRaw)),
+	}
+	for i, primitive := range raw.HandlersRaw {
 		f, err := parseFormatter(meta, primitive)
 		if err != nil {
 			return nil, fmt.Errorf("cannot parse handler: %v", err)
@@ -61,11 +51,16 @@ func ReadConfig(cpath string) (*Config, error) {
 		config.Formatters[i] = f
 	}
 
-	// fmt.Println(config.Handlers[0])
-	// undecoded := meta.Undecoded()
-	// if len(undecoded) != 0 {
-	// 	return nil, fmt.Errorf("unknown fields: %v", undecoded)
-	// }
+	undecoded := meta.Undecoded()
+	if len(undecoded) != 0 {
+		return nil, fmt.Errorf("unknown fields: %v", undecoded)
+	}
+
+	config.DefaultLevel, err = logrus.ParseLevel(raw.Main.DefaultLevel)
+	if err != nil {
+		return nil, fmt.Errorf("cannot parse default_level: %v", err)
+	}
+
 	return &config, nil
 }
 
@@ -94,8 +89,4 @@ func parseFormatter(meta toml.MetaData, primitive toml.Primitive) (logrus.Format
 	default:
 		return nil, fmt.Errorf("unknown formatter: %s", h.Formatter)
 	}
-}
-
-func (c *Config) Level() (logrus.Level, error) {
-	return logrus.ParseLevel(c.Main.Level)
 }
