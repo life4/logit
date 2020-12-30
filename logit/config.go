@@ -28,7 +28,7 @@ type CHandler struct {
 type Config struct {
 	Main        CMain
 	HandlersRaw []toml.Primitive `toml:"handler"`
-	formatters  []logrus.Formatter
+	Formatters  []logrus.Formatter
 }
 
 func NewConfig() Config {
@@ -52,13 +52,13 @@ func ReadConfig(cpath string) (*Config, error) {
 		return nil, fmt.Errorf("cannot read config: %v", err)
 	}
 
-	config.formatters = make([]logrus.Formatter, len(config.HandlersRaw))
+	config.Formatters = make([]logrus.Formatter, len(config.HandlersRaw))
 	for i, primitive := range config.HandlersRaw {
 		f, err := parseFormatter(meta, primitive)
 		if err != nil {
 			return nil, fmt.Errorf("cannot parse handler: %v", err)
 		}
-		config.formatters[i] = f
+		config.Formatters[i] = f
 	}
 
 	// fmt.Println(config.Handlers[0])
@@ -94,10 +94,6 @@ func parseFormatter(meta toml.MetaData, primitive toml.Primitive) (logrus.Format
 	default:
 		return nil, fmt.Errorf("unknown formatter: %s", h.Formatter)
 	}
-}
-
-func (c *Config) Formatter() (logrus.Formatter, error) {
-	return c.formatters[0], nil
 }
 
 func (c *Config) Level() (logrus.Level, error) {

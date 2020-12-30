@@ -1,26 +1,58 @@
 package logit
 
 import (
-	"fmt"
-
 	"github.com/sirupsen/logrus"
+	"github.com/tidwall/gjson"
 )
 
-func NewLogger(config *Config) (*logrus.Logger, error) {
+type Logger struct {
+	loggers []*logrus.Logger
+}
 
-	log := logrus.New()
-
-	formatter, err := config.Formatter()
-	if err != nil {
-		return nil, fmt.Errorf("cannot init formatter: %v", err)
+func (Logger) Parse(line string) (*logrus.Entry, error) {
+	parsed := gjson.Parse(line)
+	fields := make(logrus.Fields)
+	for k, v := range parsed.Map() {
+		fields[k] = v.String()
 	}
-	log.SetFormatter(formatter)
+	e := logrus.NewEntry(nil)
+	e = e.WithFields(fields)
+	e.Level = logrus.InfoLevel
+	e.Message = parsed.Get("msg").String()
+	return e, nil
+}
 
-	level, err := config.Level()
-	if err != nil {
-		return nil, fmt.Errorf("cannot parse level: %v", err)
+func (log Logger) Log(entry *logrus.Entry) {
+	for _, sublog := range log.loggers {
+		entry.Logger = sublog
+		entry.Log(entry.Level, entry.Message)
 	}
-	log.SetLevel(level)
+}
+
+func (log Logger) LogError(err error, msg string) {
+	entry := logrus.NewEntry(nil)
+	entry = entry.WithError(err)
+	for _, sublog := range log.loggers {
+		entry.Logger = sublog
+		entry.Log(logrus.ErrorLevel, msg)
+	}
+}
+
+func NewLogger(config *Config) (Logger, error) {
+	log := Logger{
+		loggers: make([]*logrus.Logger, len(config.Formatters)),
+	}
+	for i, f := range config.Formatters {
+		sublog := logrus.New()
+		sublog.SetFormatter(f)
+		log.loggers[i] = sublog
+	}
+
+	// level, err := config.Level()
+	// if err != nil {
+	// 	return nil, fmt.Errorf("cannot parse level: %v", err)
+	// }
+	// log.SetLevel(level)
 
 	return log, nil
 }
