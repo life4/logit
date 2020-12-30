@@ -40,11 +40,11 @@ func (log Logger) LogError(err error, msg string) {
 
 func NewLogger(config *Config) (Logger, error) {
 	log := Logger{
-		loggers: make([]*logrus.Logger, len(config.Formatters)),
+		loggers: make([]*logrus.Logger, len(config.Handlers)),
 	}
-	for i, f := range config.Formatters {
+	for i, handler := range config.Handlers {
 		sublog := logrus.New()
-		sublog.SetFormatter(f)
+		sublog.SetFormatter(handler)
 		log.loggers[i] = sublog
 	}
 

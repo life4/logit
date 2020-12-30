@@ -1,5 +1,9 @@
 [[handler]]
+level_from = "trace"
+level_to = "info"
 formatter = "text"
 
 [[handler]]
+level_from = "warning"
+level_to = "panic"
 formatter = "json"

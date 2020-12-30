@@ -13,6 +13,8 @@ type CMain struct {
 
 type CHandler struct {
 	Formatter string
+	LevelFrom string `toml:"level_from"`
+	LevelTo   string `toml:"level_to"`
 }
 
 // RawConfig represents the struct to parse TOML config into.
@@ -25,7 +27,7 @@ type RawConfig struct {
 // It is generated from RawConfig.
 type Config struct {
 	DefaultLevel logrus.Level
-	Formatters   []logrus.Formatter
+	Handlers     []Handler
 }
 
 func ReadConfig(cpath string) (*Config, error) {
@@ -41,14 +43,14 @@ func ReadConfig(cpath string) (*Config, error) {
 	}
 
 	config := Config{
-		Formatters: make([]logrus.Formatter, len(raw.HandlersRaw)),
+		Handlers: make([]Handler, len(raw.HandlersRaw)),
 	}
 	for i, primitive := range raw.HandlersRaw {
-		f, err := parseFormatter(meta, primitive)
+		h, err := parseFormatter(meta, primitive)
 		if err != nil {
 			return nil, fmt.Errorf("cannot parse handler: %v", err)
 		}
-		config.Formatters[i] = f
+		config.Handlers[i] = *h
 	}
 
 	undecoded := meta.Undecoded()
@@ -64,29 +66,44 @@ func ReadConfig(cpath string) (*Config, error) {
 	return &config, nil
 }
 
-func parseFormatter(meta toml.MetaData, primitive toml.Primitive) (logrus.Formatter, error) {
-	var h CHandler
-	err := meta.PrimitiveDecode(primitive, &h)
+func parseFormatter(meta toml.MetaData, primitive toml.Primitive) (*Handler, error) {
+	var config CHandler
+	err := meta.PrimitiveDecode(primitive, &config)
 	if err != nil {
 		return nil, err
 	}
 
-	switch h.Formatter {
+	var f logrus.Formatter
+	switch config.Formatter {
 	case "text":
 		fconf := NewFText()
 		err = meta.PrimitiveDecode(primitive, &fconf)
 		if err != nil {
 			return nil, err
 		}
-		return fconf.Parse()
+		f, err = fconf.Parse()
 	case "json":
 		fconf := NewFJSON()
 		err = meta.PrimitiveDecode(primitive, &fconf)
 		if err != nil {
 			return nil, err
 		}
-		return fconf.Parse()
+		f, err = fconf.Parse()
 	default:
-		return nil, fmt.Errorf("unknown formatter: %s", h.Formatter)
+		return nil, fmt.Errorf("unknown formatter: %s", config.Formatter)
 	}
+	if err != nil {
+		return nil, err
+	}
+
+	handler := Handler{formatter: f}
+	handler.levelFrom, err = logrus.ParseLevel(config.LevelFrom)
+	if err != nil {
+		return nil, fmt.Errorf("cannot parse level_from: %v", err)
+	}
+	handler.levelTo, err = logrus.ParseLevel(config.LevelTo)
+	if err != nil {
+		return nil, fmt.Errorf("cannot parse level_to: %v", err)
+	}
+	return &handler, nil
 }
