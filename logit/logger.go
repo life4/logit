@@ -85,6 +85,7 @@ func (log Logger) LogError(err error, msg string) error {
 	entry := logrus.NewEntry(nil)
 	entry = entry.WithError(err)
 	entry.Level = log.config.DefaultLevel
+	entry.Message = msg
 	return log.Log(entry)
 }
 
