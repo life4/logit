@@ -1,26 +1,22 @@
 package logit
 
 import (
-	"os"
-
 	"github.com/sirupsen/logrus"
 )
 
 type TextHandler struct {
+	BaseHandler
 	Colors    bool
 	Timestamp string
 	Sort      bool
-	LevelFrom Level `toml:"level_from"`
-	LevelTo   Level `toml:"level_to"`
 }
 
 func NewTextHandler() TextHandler {
 	return TextHandler{
-		Colors:    true,
-		Timestamp: "YYYY-MM-dd HH:mm:ss",
-		Sort:      true,
-		LevelFrom: TraceLevel,
-		LevelTo:   PanicLevel,
+		Colors:      true,
+		Timestamp:   "YYYY-MM-dd HH:mm:ss",
+		Sort:        true,
+		BaseHandler: NewBaseHandler(),
 	}
 }
 
@@ -32,11 +28,11 @@ func (config TextHandler) Parse() (*Handler, error) {
 		FullTimestamp:   true,
 		TimestampFormat: convertDateFormat(config.Timestamp),
 	}
-	h := Handler{
-		formatter: &f,
-		stream:    os.Stdout,
-		levelFrom: config.LevelFrom.Level,
-		levelTo:   config.LevelTo.Level,
+
+	h, err := config.BaseHandler.Parse()
+	if err != nil {
+		return nil, err
 	}
-	return &h, nil
+	h.formatter = &f
+	return h, nil
 }
