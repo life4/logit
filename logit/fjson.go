@@ -16,7 +16,7 @@ func NewFJSON() FJSON {
 	}
 }
 
-func FJSONParse(config FJSON) (*logrus.JSONFormatter, error) {
+func (config FJSON) Parse() (*logrus.JSONFormatter, error) {
 	f := logrus.JSONFormatter{
 		DataKey:         config.DataKey,
 		TimestampFormat: convertDateFormat(config.Timestamp),

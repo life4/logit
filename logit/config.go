@@ -78,14 +78,14 @@ func parseFormatter(meta toml.MetaData, primitive toml.Primitive) (logrus.Format
 		if err != nil {
 			return nil, err
 		}
-		return FTextParse(fconf)
+		return fconf.Parse()
 	case "json":
 		fconf := NewFJSON()
 		err = meta.PrimitiveDecode(primitive, &fconf)
 		if err != nil {
 			return nil, err
 		}
-		return FJSONParse(fconf)
+		return fconf.Parse()
 	default:
 		return nil, fmt.Errorf("unknown formatter: %s", h.Formatter)
 	}

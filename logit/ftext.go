@@ -18,7 +18,7 @@ func NewFText() FText {
 	}
 }
 
-func FTextParse(config FText) (*logrus.TextFormatter, error) {
+func (config FText) Parse() (*logrus.TextFormatter, error) {
 	f := logrus.TextFormatter{
 		ForceColors:     config.Colors,
 		DisableColors:   !config.Colors,
