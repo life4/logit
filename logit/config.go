@@ -12,7 +12,7 @@ type CMain struct {
 }
 
 type CHandler struct {
-	Formatter string
+	Format string
 }
 
 // RawConfig represents the struct to parse TOML config into.
@@ -71,7 +71,7 @@ func parseFormatter(meta toml.MetaData, primitive toml.Primitive) (*Handler, err
 		return nil, err
 	}
 
-	switch config.Formatter {
+	switch config.Format {
 	case "text":
 		fconf := NewTextHandler()
 		err = meta.PrimitiveDecode(primitive, &fconf)
@@ -94,6 +94,6 @@ func parseFormatter(meta toml.MetaData, primitive toml.Primitive) (*Handler, err
 		}
 		return fconf.Parse()
 	default:
-		return nil, fmt.Errorf("unknown formatter: %s", config.Formatter)
+		return nil, fmt.Errorf("unknown format: %s", config.Format)
 	}
 }

@@ -1,7 +1,7 @@
 [[handler]]
-formatter = "text"
+format = "text"
 
 [[handler]]
 level_from = "warning"
 level_to = "panic"
-formatter = "json"
+format = "json"

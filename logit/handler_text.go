@@ -20,6 +20,7 @@ func NewTextHandler() TextHandler {
 
 func (config TextHandler) Parse() (*Handler, error) {
 	f := logrus.TextFormatter{
+		ForceColors:     true,
 		DisableSorting:  !config.Sort,
 		FullTimestamp:   true,
 		TimestampFormat: convertDateFormat(config.Timestamp),
