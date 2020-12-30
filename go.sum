@@ -41,6 +41,8 @@ github.com/araddon/dateparse v0.0.0-20201001162425-8aadafed4dc4/go.mod h1:hMAUZF
 github.com/aybabtme/logzalgo v0.0.0-20191015021931-2f671f6203fa h1:AAY+KljhLlgbQAbHirawnOmLs5QXkdBz4M0hyY4WsiQ=
 github.com/aybabtme/logzalgo v0.0.0-20191015021931-2f671f6203fa/go.mod h1:32hclK0Nkc+noRp7i0LagWZfFHIv5uW/WRriwfz+fdk=
 github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869/go.mod h1:Ekp36dRnpXw/yCqJaO+ZrUyxD+3VXMFFr56k5XYrpB4=
+github.com/bshuster-repo/logrus-logstash-hook v1.0.0 h1:e+C0SB5R1pu//O4MQ3f9cFuPGoOVeF2fE4Og9otCc70=
+github.com/bshuster-repo/logrus-logstash-hook v1.0.0/go.mod h1:zsTqEiSzDgAa/8GZR7E1qaXrhYNDKBYy5/dWPTIflbk=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/certifi/gocertifi v0.0.0-20200922220541-2c3bb06c6054 h1:uH66TXeswKn5PW5zdZ39xEwfS9an067BirqA+P4QaLI=
 github.com/certifi/gocertifi v0.0.0-20200922220541-2c3bb06c6054/go.mod h1:sGbDF6GwGcLpkNXPUTkMRoywsNa/ol15pxFe6ERfguA=
