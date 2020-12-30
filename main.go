@@ -20,7 +20,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	log, err := logit.NewLogger(config)
+	log, err := logit.NewLogger(*config)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -32,8 +32,7 @@ func main() {
 		entry, err := log.Parse(line)
 		if err != nil {
 			err = fmt.Errorf("cannot parse entry: %v", err)
-			fmt.Println(err)
-			// log.WithError(err).Error(err)
+			log.LogError(err, line)
 		}
 		log.Log(entry)
 	}

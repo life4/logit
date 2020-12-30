@@ -1,26 +1,73 @@
 package logit
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 
+	"github.com/araddon/dateparse"
 	"github.com/sirupsen/logrus"
-	"github.com/tidwall/gjson"
 )
 
 type Logger struct {
+	config   Config
 	handlers []Handler
 }
 
-func (Logger) Parse(line string) (*logrus.Entry, error) {
-	parsed := gjson.Parse(line)
+func (log Logger) Parse(line string) (*logrus.Entry, error) {
 	fields := make(logrus.Fields)
-	for k, v := range parsed.Map() {
-		fields[k] = v.String()
+	err := json.Unmarshal([]byte(line), &fields)
+	if err != nil {
+		return nil, err
 	}
+
+	// extract message
+	msgRaw, ok := fields[log.config.Fields.Message]
+	if !ok {
+		return nil, errors.New("cannot find message field")
+	}
+	msgStr, ok := msgRaw.(string)
+	if !ok {
+		return nil, errors.New("message is not a string")
+	}
+	delete(fields, log.config.Fields.Message)
+
+	// extract level
+	lvlRaw, ok := fields[log.config.Fields.Level]
+	if !ok {
+		return nil, errors.New("cannot find level field")
+	}
+	lvlStr, ok := lvlRaw.(string)
+	if !ok {
+		return nil, errors.New("level is not a string")
+	}
+	lvl, err := logrus.ParseLevel(lvlStr)
+	if err != nil {
+		return nil, err
+	}
+	delete(fields, log.config.Fields.Level)
+
+	// extract time
+	timeRaw, ok := fields[log.config.Fields.Time]
+	if !ok {
+		return nil, errors.New("cannot find time field")
+	}
+	timeStr, ok := timeRaw.(string)
+	if !ok {
+		return nil, errors.New("time is not a string")
+	}
+	time, err := dateparse.ParseAny(timeStr)
+	if err != nil {
+		return nil, err
+	}
+	delete(fields, log.config.Fields.Time)
+
 	e := logrus.NewEntry(nil)
 	e = e.WithFields(fields)
-	e.Level = logrus.InfoLevel
-	e.Message = parsed.Get("msg").String()
+
+	e.Message = msgStr
+	e.Level = lvl
+	e.Time = time
 	return e, nil
 }
 
@@ -40,19 +87,13 @@ func (log Logger) LogError(err error, msg string) error {
 	return log.Log(entry)
 }
 
-func NewLogger(config *Config) (Logger, error) {
+func NewLogger(config Config) (Logger, error) {
 	log := Logger{
 		handlers: make([]Handler, len(config.Handlers)),
 	}
 	for i, handler := range config.Handlers {
 		log.handlers[i] = handler
 	}
-
-	// level, err := config.Level()
-	// if err != nil {
-	// 	return nil, fmt.Errorf("cannot parse level: %v", err)
-	// }
-	// log.SetLevel(level)
-
+	log.config = config
 	return log, nil
 }

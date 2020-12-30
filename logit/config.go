@@ -15,9 +15,16 @@ type CHandler struct {
 	Format string
 }
 
+type CFields struct {
+	Message string
+	Level   string
+	Time    string
+}
+
 // RawConfig represents the struct to parse TOML config into.
 type RawConfig struct {
 	Main        CMain
+	Fields      CFields
 	HandlersRaw []toml.Primitive `toml:"handler"`
 }
 
@@ -26,12 +33,18 @@ type RawConfig struct {
 type Config struct {
 	DefaultLevel logrus.Level
 	Handlers     []Handler
+	Fields       CFields
 }
 
 func ReadConfig(cpath string) (*Config, error) {
 	raw := RawConfig{
 		Main: CMain{
 			DefaultLevel: "ERROR",
+		},
+		Fields: CFields{
+			Message: "msg",
+			Level:   "level",
+			Time:    "time",
 		},
 	}
 
@@ -61,6 +74,7 @@ func ReadConfig(cpath string) (*Config, error) {
 		return nil, fmt.Errorf("cannot parse default_level: %v", err)
 	}
 
+	config.Fields = raw.Fields
 	return &config, nil
 }
 
