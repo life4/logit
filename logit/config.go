@@ -79,6 +79,13 @@ func parseFormatter(meta toml.MetaData, primitive toml.Primitive) (*Handler, err
 			return nil, err
 		}
 		return fconf.Parse()
+	case "logfmt":
+		fconf := NewLogFmtHandler()
+		err = meta.PrimitiveDecode(primitive, &fconf)
+		if err != nil {
+			return nil, err
+		}
+		return fconf.Parse()
 	case "json":
 		fconf := NewJSONHandler()
 		err = meta.PrimitiveDecode(primitive, &fconf)

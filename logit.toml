@@ -1,6 +1,4 @@
 [[handler]]
-level_from = "trace"
-level_to = "info"
 formatter = "text"
 
 [[handler]]

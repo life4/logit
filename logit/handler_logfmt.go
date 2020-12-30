@@ -4,22 +4,23 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type TextHandler struct {
+type LogFmtHandler struct {
 	BaseHandler
 	Timestamp string
 	Sort      bool
 }
 
-func NewTextHandler() TextHandler {
-	return TextHandler{
+func NewLogFmtHandler() LogFmtHandler {
+	return LogFmtHandler{
 		Timestamp:   "YYYY-MM-dd HH:mm:ss",
 		Sort:        true,
 		BaseHandler: NewBaseHandler(),
 	}
 }
 
-func (config TextHandler) Parse() (*Handler, error) {
+func (config LogFmtHandler) Parse() (*Handler, error) {
 	f := logrus.TextFormatter{
+		DisableColors:   true,
 		DisableSorting:  !config.Sort,
 		FullTimestamp:   true,
 		TimestampFormat: convertDateFormat(config.Timestamp),
