@@ -107,6 +107,20 @@ func parseFormatter(meta toml.MetaData, primitive toml.Primitive) (*Handler, err
 			return nil, err
 		}
 		return fconf.Parse()
+	case "sentry":
+		fconf := NewSentryHandler()
+		err = meta.PrimitiveDecode(primitive, &fconf)
+		if err != nil {
+			return nil, err
+		}
+		return fconf.Parse()
+	case "gcloud":
+		fconf := NewGCloudHandler()
+		err = meta.PrimitiveDecode(primitive, &fconf)
+		if err != nil {
+			return nil, err
+		}
+		return fconf.Parse()
 	default:
 		return nil, fmt.Errorf("unknown format: %s", config.Format)
 	}
