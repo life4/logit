@@ -111,7 +111,14 @@ func parseFormatter(meta toml.MetaData, primitive toml.Primitive) (*Handler, err
 		fconf := NewZalgoHandler()
 		err = meta.PrimitiveDecode(primitive, &fconf)
 		if err != nil {
-			return nil, fmt.Errorf("json config: %v", err)
+			return nil, fmt.Errorf("zalgo config: %v", err)
+		}
+		return fconf.Parse()
+	case "syslog":
+		fconf := NewSysLogHandler()
+		err = meta.PrimitiveDecode(primitive, &fconf)
+		if err != nil {
+			return nil, fmt.Errorf("syslog config: %v", err)
 		}
 		return fconf.Parse()
 	case "sentry":

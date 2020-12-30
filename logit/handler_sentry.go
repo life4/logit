@@ -17,6 +17,7 @@ type SentryHandler struct {
 func NewSentryHandler() SentryHandler {
 	return SentryHandler{
 		BaseHandler: NewBaseHandler(),
+		Timeout:     "20s",
 	}
 }
 
