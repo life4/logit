@@ -1,12 +1,14 @@
 package logit
 
 import (
+	"fmt"
+
 	"github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
 )
 
 type Logger struct {
-	loggers []*logrus.Logger
+	handlers []Handler
 }
 
 func (Logger) Parse(line string) (*logrus.Entry, error) {
@@ -22,30 +24,28 @@ func (Logger) Parse(line string) (*logrus.Entry, error) {
 	return e, nil
 }
 
-func (log Logger) Log(entry *logrus.Entry) {
-	for _, sublog := range log.loggers {
-		entry.Logger = sublog
-		entry.Log(entry.Level, entry.Message)
+func (log Logger) Log(entry *logrus.Entry) error {
+	for _, handler := range log.handlers {
+		err := handler.Log(entry)
+		if err != nil {
+			return fmt.Errorf("cannot write log entry: %v", err)
+		}
 	}
+	return nil
 }
 
-func (log Logger) LogError(err error, msg string) {
+func (log Logger) LogError(err error, msg string) error {
 	entry := logrus.NewEntry(nil)
 	entry = entry.WithError(err)
-	for _, sublog := range log.loggers {
-		entry.Logger = sublog
-		entry.Log(logrus.ErrorLevel, msg)
-	}
+	return log.Log(entry)
 }
 
 func NewLogger(config *Config) (Logger, error) {
 	log := Logger{
-		loggers: make([]*logrus.Logger, len(config.Handlers)),
+		handlers: make([]Handler, len(config.Handlers)),
 	}
 	for i, handler := range config.Handlers {
-		sublog := logrus.New()
-		sublog.SetFormatter(handler)
-		log.loggers[i] = sublog
+		log.handlers[i] = handler
 	}
 
 	// level, err := config.Level()

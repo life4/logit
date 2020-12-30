@@ -2,6 +2,7 @@ package logit
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/BurntSushi/toml"
 	"github.com/sirupsen/logrus"
@@ -96,7 +97,10 @@ func parseFormatter(meta toml.MetaData, primitive toml.Primitive) (*Handler, err
 		return nil, err
 	}
 
-	handler := Handler{formatter: f}
+	handler := Handler{
+		formatter: f,
+		stream:    os.Stdout,
+	}
 	handler.levelFrom, err = logrus.ParseLevel(config.LevelFrom)
 	if err != nil {
 		return nil, fmt.Errorf("cannot parse level_from: %v", err)
