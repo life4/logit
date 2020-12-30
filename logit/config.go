@@ -90,35 +90,35 @@ func parseFormatter(meta toml.MetaData, primitive toml.Primitive) (*Handler, err
 		fconf := NewTextHandler()
 		err = meta.PrimitiveDecode(primitive, &fconf)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("text config: %v", err)
 		}
 		return fconf.Parse()
 	case "logfmt":
 		fconf := NewLogFmtHandler()
 		err = meta.PrimitiveDecode(primitive, &fconf)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("logfmt config: %v", err)
 		}
 		return fconf.Parse()
 	case "json":
 		fconf := NewJSONHandler()
 		err = meta.PrimitiveDecode(primitive, &fconf)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("json config: %v", err)
 		}
 		return fconf.Parse()
 	case "sentry":
 		fconf := NewSentryHandler()
 		err = meta.PrimitiveDecode(primitive, &fconf)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("sentry config: %v", err)
 		}
 		return fconf.Parse()
 	case "gcloud":
 		fconf := NewGCloudHandler()
 		err = meta.PrimitiveDecode(primitive, &fconf)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("gcloud config: %v", err)
 		}
 		return fconf.Parse()
 	default:

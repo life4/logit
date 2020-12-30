@@ -13,6 +13,13 @@ type Handler struct {
 	stream    io.Writer
 	levelFrom logrus.Level
 	levelTo   logrus.Level
+	wait      func()
+}
+
+func (handler Handler) Wait() {
+	if handler.wait != nil {
+		handler.wait()
+	}
 }
 
 func (handler Handler) Log(entry *logrus.Entry) error {

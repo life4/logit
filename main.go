@@ -48,4 +48,5 @@ func main() {
 		}
 	}
 
+	log.Wait()
 }

@@ -71,6 +71,12 @@ func (log Logger) Parse(line string) (*logrus.Entry, error) {
 	return e, nil
 }
 
+func (log Logger) Wait() {
+	for _, handler := range log.handlers {
+		handler.Wait()
+	}
+}
+
 func (log Logger) Log(entry *logrus.Entry) error {
 	for _, handler := range log.handlers {
 		err := handler.Log(entry)
