@@ -160,6 +160,13 @@ func parseFormatter(meta toml.MetaData, primitive toml.Primitive) (*Handler, err
 			return nil, fmt.Errorf("slack config: %v", err)
 		}
 		return fconf.Parse()
+	case "aws":
+		fconf := NewAWSHandler()
+		err = meta.PrimitiveDecode(primitive, &fconf)
+		if err != nil {
+			return nil, fmt.Errorf("aws config: %v", err)
+		}
+		return fconf.Parse()
 	case "gcloud":
 		fconf := NewGCloudHandler()
 		err = meta.PrimitiveDecode(primitive, &fconf)
