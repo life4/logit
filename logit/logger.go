@@ -15,6 +15,14 @@ type Logger struct {
 }
 
 func (log Logger) Parse(line string) (*logrus.Entry, error) {
+	// If non-JSON passed, use it as message, set the default level
+	if line == "" || line[0] != '{' {
+		entry := logrus.NewEntry(nil)
+		entry.Level = log.config.Levels.Default
+		entry.Message = line
+		return entry, nil
+	}
+
 	fields := make(logrus.Fields)
 	err := json.Unmarshal([]byte(line), &fields)
 	if err != nil {
@@ -90,7 +98,7 @@ func (log Logger) Log(entry *logrus.Entry) error {
 func (log Logger) LogError(err error, msg string) error {
 	entry := logrus.NewEntry(nil)
 	entry = entry.WithError(err)
-	entry.Level = log.config.DefaultLevel
+	entry.Level = log.config.Levels.Error
 	entry.Message = msg
 	return log.Log(entry)
 }

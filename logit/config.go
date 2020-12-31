@@ -7,8 +7,9 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type CMain struct {
-	DefaultLevel string `toml:"default_level"`
+type CLevels struct {
+	Default string `toml:"default"`
+	Error   string `toml:"error"`
 }
 
 type CHandler struct {
@@ -23,23 +24,29 @@ type CFields struct {
 
 // RawConfig represents the struct to parse TOML config into.
 type RawConfig struct {
-	Main        CMain
+	Levels      CLevels
 	Fields      CFields
 	HandlersRaw []toml.Primitive `toml:"handler"`
+}
+
+type Levels struct {
+	Default logrus.Level
+	Error   logrus.Level
 }
 
 // RawConfig represents the config how it is used internally.
 // It is generated from RawConfig.
 type Config struct {
-	DefaultLevel logrus.Level
-	Handlers     []Handler
-	Fields       CFields
+	Levels   Levels
+	Handlers []Handler
+	Fields   CFields
 }
 
 func ReadConfig(cpath string) (*Config, error) {
 	raw := RawConfig{
-		Main: CMain{
-			DefaultLevel: "ERROR",
+		Levels: CLevels{
+			Default: "INFO",
+			Error:   "ERROR",
 		},
 		Fields: CFields{
 			Message: "msg",
@@ -69,9 +76,13 @@ func ReadConfig(cpath string) (*Config, error) {
 		return nil, fmt.Errorf("unknown fields: %v", undecoded)
 	}
 
-	config.DefaultLevel, err = logrus.ParseLevel(raw.Main.DefaultLevel)
+	config.Levels.Default, err = logrus.ParseLevel(raw.Levels.Default)
 	if err != nil {
-		return nil, fmt.Errorf("cannot parse default_level: %v", err)
+		return nil, fmt.Errorf("cannot parse levels.default: %v", err)
+	}
+	config.Levels.Error, err = logrus.ParseLevel(raw.Levels.Error)
+	if err != nil {
+		return nil, fmt.Errorf("cannot parse levels.error: %v", err)
 	}
 
 	config.Fields = raw.Fields
