@@ -22,6 +22,7 @@ require (
 	github.com/kdar/logrus-cloudwatchlogs v0.0.0-20200414190340-facbc54742f0
 	github.com/kenshaw/sdhook v0.1.0
 	github.com/kortschak/zalgo v0.0.0-20190131100928-344d6584eb92 // indirect
+	github.com/kz/discordrus v1.2.0
 	github.com/olivere/elastic/v7 v7.0.22
 	github.com/rogierlommers/logrus-redis-hook v0.0.0-20200302072909-4231d5052bd1
 	github.com/sirupsen/logrus v1.7.0
