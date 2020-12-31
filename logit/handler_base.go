@@ -14,6 +14,7 @@ type BaseHandler struct {
 	LevelTo   string `toml:"level_to"`
 	File      string
 	Mode      os.FileMode
+	Async     bool
 }
 
 func NewBaseHandler() BaseHandler {
@@ -21,6 +22,7 @@ func NewBaseHandler() BaseHandler {
 		LevelFrom: "trace",
 		LevelTo:   "panic",
 		File:      "stdout",
+		Async:     false,
 	}
 }
 
@@ -55,6 +57,7 @@ func (config BaseHandler) Parse() (*Handler, error) {
 		stream:    stream,
 		levelFrom: lfrom,
 		levelTo:   lto,
+		Async:     config.Async,
 	}
 	return &h, nil
 }

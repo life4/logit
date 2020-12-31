@@ -87,6 +87,18 @@ func (log Logger) Wait() {
 
 func (log Logger) Log(entry *logrus.Entry) error {
 	for _, handler := range log.handlers {
+		// run in background
+		if handler.Async {
+			go func() {
+				err := handler.Log(entry)
+				if err != nil {
+					fmt.Printf("cannot write log entry: %v", err)
+				}
+			}()
+			continue
+		}
+
+		// run synchronously
 		err := handler.Log(entry)
 		if err != nil {
 			return fmt.Errorf("cannot write log entry: %v", err)

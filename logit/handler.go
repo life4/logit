@@ -8,6 +8,8 @@ import (
 )
 
 type Handler struct {
+	Async bool
+
 	hook      logrus.Hook
 	formatter logrus.Formatter
 	stream    io.Writer
