@@ -153,6 +153,13 @@ func parseFormatter(meta toml.MetaData, primitive toml.Primitive) (*Handler, err
 			return nil, fmt.Errorf("sentry config: %v", err)
 		}
 		return fconf.Parse()
+	case "slack":
+		fconf := NewSlackHandler()
+		err = meta.PrimitiveDecode(primitive, &fconf)
+		if err != nil {
+			return nil, fmt.Errorf("sentry config: %v", err)
+		}
+		return fconf.Parse()
 	case "gcloud":
 		fconf := NewGCloudHandler()
 		err = meta.PrimitiveDecode(primitive, &fconf)

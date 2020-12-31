@@ -30,7 +30,7 @@ func (config ElasticHandler) Parse() (*Handler, error) {
 	hook, err := elogrus.NewElasticHook(
 		client,
 		config.Host,
-		logrus.DebugLevel,
+		logrus.TraceLevel,
 		config.Index,
 	)
 	if err != nil {
