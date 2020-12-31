@@ -12,7 +12,8 @@ require (
 	github.com/getsentry/raven-go v0.2.0 // indirect
 	github.com/kenshaw/sdhook v0.1.0
 	github.com/kortschak/zalgo v0.0.0-20190131100928-344d6584eb92 // indirect
-	github.com/pkg/errors v0.9.1 // indirect
+	github.com/olivere/elastic/v7 v7.0.22
 	github.com/sirupsen/logrus v1.7.0
 	github.com/vjeantet/jodaTime v1.0.0
+	gopkg.in/sohlich/elogrus.v7 v7.0.0
 )
