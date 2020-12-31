@@ -23,6 +23,7 @@ require (
 	github.com/kenshaw/sdhook v0.1.0
 	github.com/kortschak/zalgo v0.0.0-20190131100928-344d6584eb92 // indirect
 	github.com/kz/discordrus v1.2.0
+	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/olivere/elastic/v7 v7.0.22
 	github.com/rogierlommers/logrus-redis-hook v0.0.0-20200302072909-4231d5052bd1
 	github.com/sebest/logrusly v0.0.0-20180315190218-3235eccb8edc
@@ -31,5 +32,6 @@ require (
 	github.com/vjeantet/jodaTime v1.0.0
 	github.com/weekface/mgorus v0.0.0-20181029072001-239539fe10e4
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22 // indirect
+	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 	gopkg.in/sohlich/elogrus.v7 v7.0.0
 )
