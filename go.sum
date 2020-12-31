@@ -247,6 +247,10 @@ github.com/rogierlommers/logrus-redis-hook v0.0.0-20200302072909-4231d5052bd1 h1
 github.com/rogierlommers/logrus-redis-hook v0.0.0-20200302072909-4231d5052bd1/go.mod h1:L6vLodqt5jUquYw9kUNVrC3rqsxKoLz/M8RybSc4NZo=
 github.com/rogpeppe/go-internal v1.3.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
 github.com/scylladb/termtables v0.0.0-20191203121021-c4c0b6d42ff4/go.mod h1:C1a7PQSMz9NShzorzCiG2fk9+xuCgLkPeCvMHYR2OWg=
+github.com/sebest/logrusly v0.0.0-20180315190218-3235eccb8edc h1:33Y9e6XbTgRbegALZOgiqoTdJ10MblBtW91C7frb93Q=
+github.com/sebest/logrusly v0.0.0-20180315190218-3235eccb8edc/go.mod h1:9naouKoN/y/p7O5rwx0NPKfF0ILlcMpNFbbKAl4tUCE=
+github.com/segmentio/go-loggly v0.5.0 h1:mnK6cIo6ajLsaaa1uqEi5IPsMlJYu+F0HpIoLjwIBFY=
+github.com/segmentio/go-loggly v0.5.0/go.mod h1:8zLRYR5npGjaOXgPSKat5+oOh+UHd8OdbS18iqX9F6Y=
 github.com/sirupsen/logrus v1.2.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
 github.com/sirupsen/logrus v1.4.2/go.mod h1:tLMulIdttU9McNUspp0xgXVQah82FyeX6MwdIuYE2rE=
 github.com/sirupsen/logrus v1.5.0/go.mod h1:+F7Ogzej0PZc/94MaYx/nvG9jOFMD2osvC3s+Squfpo=

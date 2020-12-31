@@ -216,6 +216,13 @@ func parseFormatter(meta toml.MetaData, primitive toml.Primitive) (*Handler, err
 			return nil, fmt.Errorf("discord config: %v", err)
 		}
 		return fconf.Parse()
+	case "loggly":
+		fconf := NewLogglyHandler()
+		err = meta.PrimitiveDecode(primitive, &fconf)
+		if err != nil {
+			return nil, fmt.Errorf("loggly config: %v", err)
+		}
+		return fconf.Parse()
 	default:
 		return nil, fmt.Errorf("unknown format: %s", config.Format)
 	}

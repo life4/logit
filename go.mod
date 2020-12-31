@@ -25,6 +25,8 @@ require (
 	github.com/kz/discordrus v1.2.0
 	github.com/olivere/elastic/v7 v7.0.22
 	github.com/rogierlommers/logrus-redis-hook v0.0.0-20200302072909-4231d5052bd1
+	github.com/sebest/logrusly v0.0.0-20180315190218-3235eccb8edc
+	github.com/segmentio/go-loggly v0.5.0 // indirect
 	github.com/sirupsen/logrus v1.7.0
 	github.com/vjeantet/jodaTime v1.0.0
 	github.com/weekface/mgorus v0.0.0-20181029072001-239539fe10e4
