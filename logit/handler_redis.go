@@ -15,7 +15,7 @@ type RedisHandler struct {
 	Format     string
 	App        string
 	SourceHost string `toml:"source_host"`
-	DB         int
+	Database   int
 	TTL        int
 }
 
@@ -39,7 +39,7 @@ func (config RedisHandler) Parse() (*Handler, error) {
 		Format: config.Format,
 		App:    config.App,
 		Host:   config.Host,
-		DB:     config.DB,
+		DB:     config.Database,
 		TTL:    config.TTL,
 	})
 	if err != nil {

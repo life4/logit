@@ -202,6 +202,13 @@ func parseFormatter(meta toml.MetaData, primitive toml.Primitive) (*Handler, err
 			return nil, fmt.Errorf("redis config: %v", err)
 		}
 		return fconf.Parse()
+	case "influxdb":
+		fconf := NewInfluxDBHandler()
+		err = meta.PrimitiveDecode(primitive, &fconf)
+		if err != nil {
+			return nil, fmt.Errorf("influxdb config: %v", err)
+		}
+		return fconf.Parse()
 	default:
 		return nil, fmt.Errorf("unknown format: %s", config.Format)
 	}
