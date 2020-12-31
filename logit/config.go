@@ -124,7 +124,16 @@ func parseFormatter(meta toml.MetaData, primitive toml.Primitive) (*Handler, err
 		if err != nil {
 			return nil, fmt.Errorf("rolling config: %v", err)
 		}
-		return fconf.Parse()
+		handler, err := fconf.Parse()
+		if err != nil {
+			return nil, err
+		}
+		subhandler, err := parseFormatter(meta, fconf.SubHandler)
+		if err != nil {
+			return nil, err
+		}
+		handler.formatter = subhandler.formatter
+		return handler, nil
 	case "zalgo":
 		fconf := NewZalgoHandler()
 		err = meta.PrimitiveDecode(primitive, &fconf)

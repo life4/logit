@@ -1,12 +1,14 @@
 package logit
 
 import (
+	"github.com/BurntSushi/toml"
 	"github.com/natefinch/lumberjack"
 	"github.com/sirupsen/logrus"
 )
 
 type RollingHandler struct {
 	BaseHandler
+	SubHandler toml.Primitive `toml:"handler"`
 
 	File       string `toml:"file"`
 	MaxSize    int    `toml:"max_size"`
