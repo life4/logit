@@ -195,6 +195,13 @@ func parseFormatter(meta toml.MetaData, primitive toml.Primitive) (*Handler, err
 			return nil, fmt.Errorf("mongodb config: %v", err)
 		}
 		return fconf.Parse()
+	case "redis":
+		fconf := NewRedisHandler()
+		err = meta.PrimitiveDecode(primitive, &fconf)
+		if err != nil {
+			return nil, fmt.Errorf("redis config: %v", err)
+		}
+		return fconf.Parse()
 	default:
 		return nil, fmt.Errorf("unknown format: %s", config.Format)
 	}
