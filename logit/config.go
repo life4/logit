@@ -143,21 +143,21 @@ func parseFormatter(meta toml.MetaData, primitive toml.Primitive) (*Handler, err
 		fconf := NewLogstashHandler()
 		err = meta.PrimitiveDecode(primitive, &fconf)
 		if err != nil {
-			return nil, fmt.Errorf("sentry config: %v", err)
+			return nil, fmt.Errorf("logstash config: %v", err)
 		}
 		return fconf.Parse()
 	case "elastic":
 		fconf := NewElasticHandler()
 		err = meta.PrimitiveDecode(primitive, &fconf)
 		if err != nil {
-			return nil, fmt.Errorf("sentry config: %v", err)
+			return nil, fmt.Errorf("elastic config: %v", err)
 		}
 		return fconf.Parse()
 	case "slack":
 		fconf := NewSlackHandler()
 		err = meta.PrimitiveDecode(primitive, &fconf)
 		if err != nil {
-			return nil, fmt.Errorf("sentry config: %v", err)
+			return nil, fmt.Errorf("slack config: %v", err)
 		}
 		return fconf.Parse()
 	case "gcloud":
@@ -165,6 +165,13 @@ func parseFormatter(meta toml.MetaData, primitive toml.Primitive) (*Handler, err
 		err = meta.PrimitiveDecode(primitive, &fconf)
 		if err != nil {
 			return nil, fmt.Errorf("gcloud config: %v", err)
+		}
+		return fconf.Parse()
+	case "graylog":
+		fconf := NewGraylogHandler()
+		err = meta.PrimitiveDecode(primitive, &fconf)
+		if err != nil {
+			return nil, fmt.Errorf("graylog config: %v", err)
 		}
 		return fconf.Parse()
 	default:
