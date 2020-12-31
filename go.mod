@@ -19,5 +19,7 @@ require (
 	github.com/olivere/elastic/v7 v7.0.22
 	github.com/sirupsen/logrus v1.7.0
 	github.com/vjeantet/jodaTime v1.0.0
+	github.com/weekface/mgorus v0.0.0-20181029072001-239539fe10e4
+	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22 // indirect
 	gopkg.in/sohlich/elogrus.v7 v7.0.0
 )

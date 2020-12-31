@@ -181,6 +181,13 @@ func parseFormatter(meta toml.MetaData, primitive toml.Primitive) (*Handler, err
 			return nil, fmt.Errorf("fluentd config: %v", err)
 		}
 		return fconf.Parse()
+	case "mongodb":
+		fconf := NewMongoDBHandler()
+		err = meta.PrimitiveDecode(primitive, &fconf)
+		if err != nil {
+			return nil, fmt.Errorf("mongodb config: %v", err)
+		}
+		return fconf.Parse()
 	default:
 		return nil, fmt.Errorf("unknown format: %s", config.Format)
 	}
