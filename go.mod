@@ -8,6 +8,7 @@ require (
 	github.com/aybabtme/logzalgo v0.0.0-20191015021931-2f671f6203fa
 	github.com/bshuster-repo/logrus-logstash-hook v1.0.0
 	github.com/certifi/gocertifi v0.0.0-20200922220541-2c3bb06c6054 // indirect
+	github.com/evalphobia/logrus_fluent v0.5.4
 	github.com/evalphobia/logrus_sentry v0.8.2
 	github.com/gemnasium/logrus-graylog-hook v2.0.7+incompatible
 	github.com/getsentry/raven-go v0.2.0 // indirect
