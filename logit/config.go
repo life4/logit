@@ -97,27 +97,6 @@ func parseFormatter(meta toml.MetaData, primitive toml.Primitive) (*Handler, err
 	}
 
 	switch config.Format {
-	case "text":
-		fconf := NewTextHandler()
-		err = meta.PrimitiveDecode(primitive, &fconf)
-		if err != nil {
-			return nil, fmt.Errorf("text config: %v", err)
-		}
-		return fconf.Parse()
-	case "logfmt":
-		fconf := NewLogFmtHandler()
-		err = meta.PrimitiveDecode(primitive, &fconf)
-		if err != nil {
-			return nil, fmt.Errorf("logfmt config: %v", err)
-		}
-		return fconf.Parse()
-	case "json":
-		fconf := NewJSONHandler()
-		err = meta.PrimitiveDecode(primitive, &fconf)
-		if err != nil {
-			return nil, fmt.Errorf("json config: %v", err)
-		}
-		return fconf.Parse()
 	case "rolling":
 		fconf := NewRollingHandler()
 		err = meta.PrimitiveDecode(primitive, &fconf)
@@ -240,6 +219,6 @@ func parseFormatter(meta toml.MetaData, primitive toml.Primitive) (*Handler, err
 		}
 		return fconf.Parse()
 	default:
-		return nil, fmt.Errorf("unknown format: %s", config.Format)
+		return ParseHandler(meta, primitive)
 	}
 }

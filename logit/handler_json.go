@@ -1,6 +1,9 @@
 package logit
 
 import (
+	"fmt"
+
+	"github.com/BurntSushi/toml"
 	"github.com/sirupsen/logrus"
 )
 
@@ -29,4 +32,21 @@ func (config JSONHandler) Parse() (*Handler, error) {
 	}
 	h.formatter = &f
 	return h, nil
+}
+
+func jsonParser(meta toml.MetaData, primitive toml.Primitive) (*Handler, error) {
+	fconf := NewJSONHandler()
+	err := meta.PrimitiveDecode(primitive, &fconf)
+	if err != nil {
+		return nil, fmt.Errorf("parse: %v", err)
+	}
+	handler, err := fconf.Parse()
+	if err != nil {
+		return nil, fmt.Errorf("init: %v", err)
+	}
+	return handler, nil
+}
+
+func init() {
+	RegisterParser("json", jsonParser)
 }
