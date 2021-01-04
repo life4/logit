@@ -6,8 +6,29 @@ Why it is important:
 
 * Your application will contain only bussiness logic. Don't write your own logging library.
 * Your application will not send secondary network requests.
-* Your application will be faster. It's easy to make a JSON entry and feed it into stdout, and logit will take carwe of the rest.
+* Your application will be faster. It's easy to make a JSON entry and feed it into stdout, and logit will take care of the rest.
 * Your application will be more environment-agnostic. Here you run it on your machine, production runs on AWS, tomorrow you migrate on GCP. And in all cases, only the logit config is different, application is the same.
+
+Supported handlers:
+
+* `discord`
+* `elastic`
+* `fluentd`
+* `gcloud`
+* `graylog`
+* `influxdb`
+* `json`
+* `logfmt`
+* `loggly`
+* `logstash`
+* `mongodb`
+* `redis`
+* `rolling`
+* `sentry`
+* `slack`
+* `syslog`
+* `text`
+* `zalgo`
 
 ## Installation
 
@@ -47,8 +68,49 @@ FATAL  [2020-12-29 15:09:21] A huge walrus appears    animal=walrus
 Or just a plain text, why not:
 
 ```bash
-$ echo 'hi' | go run main.go
+$ echo 'hi' | logit
 INFO   [2021-01-04 14:48:50] hi
 ```
 
 Easy!
+
+## Producing JSON
+
+There are some good libraries that you can use in your application to produce JSON logs:
+
+* Go:
+  * [onelog](https://github.com/francoispqt/onelog): fastest.
+  * [logrus](github.com/sirupsen/logrus): most popular.
+Node.js:
+  * [bunyan](https://github.com/trentm/node-bunyan)
+* Python:
+  * [structlog](https://github.com/hynek/structlog): powerful.
+  * [python-json-logger](https://github.com/madzak/python-json-logger): formatter for the default [logging](https://docs.python.org/3/library/logging.html).
+Rust:
+  * [slog-json](https://github.com/slog-rs/json) for [slog-rs](https://github.com/slog-rs/slog).
+
+## Configuration
+
+Basics:
+
+* You can specify as many handlers as you want, and every handler will be called for every log entry.
+* Every `[[handler]]` section must have `format` option which specifies the handler type.
+* Every format has it's own options which you can find in [docs/handlers.toml](./docs/handlers.toml). Some options are common and secribed below.
+* Options `level_from` and `level_to` allow to filter out by level records that the handler will process. Example:
+
+    ```toml
+    # `text` handler will handle `trace`, `debug`, and `info`
+    [[handler]]
+    format = "text"
+    level_to = "info"
+
+    # `json` handler will handle `warning`, `error`, `fatal`, and `panic`
+    [[handler]]
+    format = "json"
+    level_from = "warning"
+    ```
+
+* Supported levels: `trace`, `debug`, `info`, `warning`, `error`, `fatal`, and `panic`.
+* Option `async` makes logit to run a separate [goroutine](https://golangbot.com/goroutines/) (kind of a cheap thread) for every handler call (for every log entry). It is useful for some network-based handlers.
+
+See [docs/handlers.toml](./docs/handlers.toml) for handler-specific configuration options.
