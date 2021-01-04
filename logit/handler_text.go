@@ -9,24 +9,28 @@ import (
 
 type TextHandler struct {
 	BaseHandler
-	Timestamp string
-	Sort      bool
+	Timestamp     string
+	Sort          bool
+	TruncateLevel bool `toml:"truncate_level"`
 }
 
 func NewTextHandler() TextHandler {
 	return TextHandler{
-		Timestamp:   "YYYY-MM-dd HH:mm:ss",
-		Sort:        true,
-		BaseHandler: NewBaseHandler(),
+		BaseHandler:   NewBaseHandler(),
+		Timestamp:     "YYYY-MM-dd HH:mm:ss",
+		Sort:          true,
+		TruncateLevel: false,
 	}
 }
 
 func (config TextHandler) Parse() (*Handler, error) {
 	f := logrus.TextFormatter{
-		ForceColors:     true,
-		DisableSorting:  !config.Sort,
-		FullTimestamp:   true,
-		TimestampFormat: convertDateFormat(config.Timestamp),
+		ForceColors:            true,
+		DisableSorting:         !config.Sort,
+		FullTimestamp:          true,
+		TimestampFormat:        convertDateFormat(config.Timestamp),
+		DisableLevelTruncation: !config.TruncateLevel,
+		PadLevelText:           !config.TruncateLevel,
 	}
 
 	h, err := config.BaseHandler.Parse()
