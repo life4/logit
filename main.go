@@ -2,17 +2,17 @@ package main
 
 import (
 	"bufio"
-	"flag"
 	"fmt"
 	"os"
 
 	"github.com/orsinium-labs/logit/logit"
+	"github.com/spf13/pflag"
 )
 
 func main() {
 	var cpath string
-	flag.StringVar(&cpath, "", "logit.toml", "")
-	flag.Parse()
+	pflag.StringVarP(&cpath, "config", "c", "logit.toml", "path to the config file")
+	pflag.Parse()
 
 	config, err := logit.ReadConfig(cpath)
 	if err != nil {

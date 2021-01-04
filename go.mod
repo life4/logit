@@ -29,6 +29,7 @@ require (
 	github.com/sebest/logrusly v0.0.0-20180315190218-3235eccb8edc
 	github.com/segmentio/go-loggly v0.5.0 // indirect
 	github.com/sirupsen/logrus v1.7.0
+	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.6.1
 	github.com/vjeantet/jodaTime v1.0.0
 	github.com/weekface/mgorus v0.0.0-20181029072001-239539fe10e4
