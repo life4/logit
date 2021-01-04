@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/araddon/dateparse"
 	"github.com/sirupsen/logrus"
@@ -12,6 +13,7 @@ import (
 type Logger struct {
 	config   Config
 	handlers []Handler
+	now      func() time.Time
 }
 
 func (log Logger) Parse(line string) (*logrus.Entry, error) {
@@ -20,6 +22,7 @@ func (log Logger) Parse(line string) (*logrus.Entry, error) {
 		entry := logrus.NewEntry(nil)
 		entry.Level = log.config.Levels.Default
 		entry.Message = line
+		entry.Time = log.now()
 		return entry, nil
 	}
 
@@ -56,26 +59,28 @@ func (log Logger) Parse(line string) (*logrus.Entry, error) {
 	delete(fields, log.config.Fields.Level)
 
 	// extract time
+	var etime time.Time
 	timeRaw, ok := fields[log.config.Fields.Time]
-	if !ok {
-		return nil, errors.New("cannot find time field")
+	if ok {
+		timeStr, ok := timeRaw.(string)
+		if !ok {
+			return nil, errors.New("time is not a string")
+		}
+		etime, err = dateparse.ParseAny(timeStr)
+		if err != nil {
+			return nil, err
+		}
+		delete(fields, log.config.Fields.Time)
+	} else {
+		etime = log.now()
 	}
-	timeStr, ok := timeRaw.(string)
-	if !ok {
-		return nil, errors.New("time is not a string")
-	}
-	time, err := dateparse.ParseAny(timeStr)
-	if err != nil {
-		return nil, err
-	}
-	delete(fields, log.config.Fields.Time)
 
 	e := logrus.NewEntry(nil)
 	e = e.WithFields(fields)
 
 	e.Message = msgStr
 	e.Level = lvl
-	e.Time = time
+	e.Time = etime
 	return e, nil
 }
 
@@ -118,6 +123,7 @@ func (log Logger) LogError(err error, msg string) error {
 func NewLogger(config Config) (Logger, error) {
 	log := Logger{
 		handlers: make([]Handler, len(config.Handlers)),
+		now:      time.Now,
 	}
 	for i, handler := range config.Handlers {
 		log.handlers[i] = handler
