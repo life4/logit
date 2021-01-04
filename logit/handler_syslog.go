@@ -1,4 +1,4 @@
-// +build h_syslog h_all
+// +build h_syslog !h_clean
 
 package logit
 

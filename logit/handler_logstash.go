@@ -1,4 +1,4 @@
-// +build h_logstash h_all
+// +build h_logstash !h_clean
 
 package logit
 

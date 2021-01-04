@@ -1,4 +1,4 @@
-// +build h_slack h_all
+// +build h_slack !h_clean
 
 package logit
 

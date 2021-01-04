@@ -1,4 +1,4 @@
-// +build h_aws h_all
+// +build h_aws !h_clean
 
 package logit
 

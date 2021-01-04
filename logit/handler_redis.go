@@ -1,4 +1,4 @@
-// +build h_redis h_all
+// +build h_redis !h_clean
 
 package logit
 

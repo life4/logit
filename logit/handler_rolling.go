@@ -1,4 +1,4 @@
-// +build h_rolling h_all
+// +build h_rolling !h_clean
 
 package logit
 

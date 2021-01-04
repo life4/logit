@@ -1,4 +1,4 @@
-// +build h_gcloud h_all
+// +build h_gcloud !h_clean
 
 package logit
 

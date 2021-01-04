@@ -1,4 +1,4 @@
-// +build h_zalgo h_all
+// +build h_zalgo !h_clean
 
 package logit
 

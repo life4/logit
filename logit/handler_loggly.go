@@ -1,4 +1,4 @@
-// +build h_loggly h_all
+// +build h_loggly !h_clean
 
 package logit
 

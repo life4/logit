@@ -1,4 +1,4 @@
-// +build h_graylog h_all
+// +build h_graylog !h_clean
 
 package logit
 

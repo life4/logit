@@ -1,4 +1,4 @@
-// +build h_sentry h_all
+// +build h_sentry !h_clean
 
 package logit
 

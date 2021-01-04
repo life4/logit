@@ -1,4 +1,4 @@
-// +build h_elastic h_all
+// +build h_elastic !h_clean
 
 package logit
 

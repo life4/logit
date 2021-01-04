@@ -1,4 +1,4 @@
-// +build h_influxdb h_all
+// +build h_influxdb !h_clean
 
 package logit
 

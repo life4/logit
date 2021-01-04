@@ -1,4 +1,4 @@
-// +build h_discord h_all
+// +build h_discord !h_clean
 
 package logit
 

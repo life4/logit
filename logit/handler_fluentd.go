@@ -1,4 +1,4 @@
-// +build h_fluentd h_all
+// +build h_fluentd !h_clean
 
 package logit
 

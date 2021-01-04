@@ -1,4 +1,4 @@
-// +build h_mongodb h_all
+// +build h_mongodb !h_clean
 
 package logit
 
