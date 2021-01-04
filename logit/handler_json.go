@@ -9,7 +9,7 @@ import (
 
 type JSONHandler struct {
 	BaseHandler
-	DataKey   string
+	DataKey   string `toml:"data_key"`
 	Timestamp string
 }
 
