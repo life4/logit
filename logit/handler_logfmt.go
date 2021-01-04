@@ -37,19 +37,20 @@ func (config LogFmtHandler) Parse() (*Handler, error) {
 	return h, nil
 }
 
-func logfmtParser(meta toml.MetaData, primitive toml.Primitive) (*Handler, error) {
-	fconf := NewLogFmtHandler()
-	err := meta.PrimitiveDecode(primitive, &fconf)
-	if err != nil {
-		return nil, fmt.Errorf("parse: %v", err)
-	}
-	handler, err := fconf.Parse()
-	if err != nil {
-		return nil, fmt.Errorf("init: %v", err)
-	}
-	return handler, nil
-}
-
 func init() {
-	RegisterParser("logfmt", logfmtParser)
+	RegisterParser("logfmt", func(
+		meta toml.MetaData,
+		primitive toml.Primitive,
+	) (*Handler, error) {
+		fconf := NewLogFmtHandler()
+		err := meta.PrimitiveDecode(primitive, &fconf)
+		if err != nil {
+			return nil, fmt.Errorf("parse: %v", err)
+		}
+		handler, err := fconf.Parse()
+		if err != nil {
+			return nil, fmt.Errorf("init: %v", err)
+		}
+		return handler, nil
+	})
 }

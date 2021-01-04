@@ -1,6 +1,9 @@
 package logit
 
 import (
+	"fmt"
+
+	"github.com/BurntSushi/toml"
 	logredis "github.com/rogierlommers/logrus-redis-hook"
 )
 
@@ -52,4 +55,22 @@ func (config RedisHandler) Parse() (*Handler, error) {
 	}
 	h.hook = hook
 	return h, nil
+}
+
+func init() {
+	RegisterParser("redis", func(
+		meta toml.MetaData,
+		primitive toml.Primitive,
+	) (*Handler, error) {
+		fconf := NewRedisHandler()
+		err := meta.PrimitiveDecode(primitive, &fconf)
+		if err != nil {
+			return nil, fmt.Errorf("parse: %v", err)
+		}
+		handler, err := fconf.Parse()
+		if err != nil {
+			return nil, fmt.Errorf("init: %v", err)
+		}
+		return handler, nil
+	})
 }

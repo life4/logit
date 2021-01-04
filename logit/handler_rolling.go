@@ -1,6 +1,8 @@
 package logit
 
 import (
+	"fmt"
+
 	"github.com/BurntSushi/toml"
 	"github.com/natefinch/lumberjack"
 	"github.com/sirupsen/logrus"
@@ -44,4 +46,27 @@ func (config RollingHandler) Parse() (*Handler, error) {
 	h.formatter = &logrus.TextFormatter{}
 	h.stream = writer
 	return h, nil
+}
+
+func init() {
+	RegisterParser("rolling", func(
+		meta toml.MetaData,
+		primitive toml.Primitive,
+	) (*Handler, error) {
+		fconf := NewRollingHandler()
+		err := meta.PrimitiveDecode(primitive, &fconf)
+		if err != nil {
+			return nil, fmt.Errorf("parse: %v", err)
+		}
+		handler, err := fconf.Parse()
+		if err != nil {
+			return nil, fmt.Errorf("init: %v", err)
+		}
+		subhandler, err := ParseHandler(meta, fconf.SubHandler)
+		if err != nil {
+			return nil, err
+		}
+		handler.formatter = subhandler.formatter
+		return handler, nil
+	})
 }

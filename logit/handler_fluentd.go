@@ -1,6 +1,11 @@
 package logit
 
-import "github.com/evalphobia/logrus_fluent"
+import (
+	"fmt"
+
+	"github.com/BurntSushi/toml"
+	"github.com/evalphobia/logrus_fluent"
+)
 
 type FluentdHandler struct {
 	BaseHandler
@@ -33,4 +38,22 @@ func (config FluentdHandler) Parse() (*Handler, error) {
 	}
 	h.hook = hook
 	return h, nil
+}
+
+func init() {
+	RegisterParser("fluentd", func(
+		meta toml.MetaData,
+		primitive toml.Primitive,
+	) (*Handler, error) {
+		fconf := NewFluentdHandler()
+		err := meta.PrimitiveDecode(primitive, &fconf)
+		if err != nil {
+			return nil, fmt.Errorf("parse: %v", err)
+		}
+		handler, err := fconf.Parse()
+		if err != nil {
+			return nil, fmt.Errorf("init: %v", err)
+		}
+		return handler, nil
+	})
 }

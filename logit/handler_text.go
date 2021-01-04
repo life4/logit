@@ -37,19 +37,20 @@ func (config TextHandler) Parse() (*Handler, error) {
 	return h, nil
 }
 
-func textParser(meta toml.MetaData, primitive toml.Primitive) (*Handler, error) {
-	fconf := NewTextHandler()
-	err := meta.PrimitiveDecode(primitive, &fconf)
-	if err != nil {
-		return nil, fmt.Errorf("parse: %v", err)
-	}
-	handler, err := fconf.Parse()
-	if err != nil {
-		return nil, fmt.Errorf("init: %v", err)
-	}
-	return handler, nil
-}
-
 func init() {
-	RegisterParser("text", textParser)
+	RegisterParser("text", func(
+		meta toml.MetaData,
+		primitive toml.Primitive,
+	) (*Handler, error) {
+		fconf := NewTextHandler()
+		err := meta.PrimitiveDecode(primitive, &fconf)
+		if err != nil {
+			return nil, fmt.Errorf("parse: %v", err)
+		}
+		handler, err := fconf.Parse()
+		if err != nil {
+			return nil, fmt.Errorf("init: %v", err)
+		}
+		return handler, nil
+	})
 }

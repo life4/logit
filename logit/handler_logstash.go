@@ -1,8 +1,10 @@
 package logit
 
 import (
+	"fmt"
 	"net"
 
+	"github.com/BurntSushi/toml"
 	logrustash "github.com/bshuster-repo/logrus-logstash-hook"
 	"github.com/sirupsen/logrus"
 )
@@ -43,4 +45,22 @@ func (config LogstashHandler) Parse() (*Handler, error) {
 	}
 	h.hook = hook
 	return h, nil
+}
+
+func init() {
+	RegisterParser("logstash", func(
+		meta toml.MetaData,
+		primitive toml.Primitive,
+	) (*Handler, error) {
+		fconf := NewLogstashHandler()
+		err := meta.PrimitiveDecode(primitive, &fconf)
+		if err != nil {
+			return nil, fmt.Errorf("parse: %v", err)
+		}
+		handler, err := fconf.Parse()
+		if err != nil {
+			return nil, fmt.Errorf("init: %v", err)
+		}
+		return handler, nil
+	})
 }

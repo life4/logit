@@ -64,11 +64,11 @@ func ReadConfig(cpath string) (*Config, error) {
 		Handlers: make([]Handler, len(raw.HandlersRaw)),
 	}
 	for i, primitive := range raw.HandlersRaw {
-		h, err := parseFormatter(meta, primitive)
+		handler, err := ParseHandler(meta, primitive)
 		if err != nil {
 			return nil, fmt.Errorf("cannot parse handler: %v", err)
 		}
-		config.Handlers[i] = *h
+		config.Handlers[i] = *handler
 	}
 
 	undecoded := meta.Undecoded()
@@ -87,138 +87,4 @@ func ReadConfig(cpath string) (*Config, error) {
 
 	config.Fields = raw.Fields
 	return &config, nil
-}
-
-func parseFormatter(meta toml.MetaData, primitive toml.Primitive) (*Handler, error) {
-	var config CHandler
-	err := meta.PrimitiveDecode(primitive, &config)
-	if err != nil {
-		return nil, err
-	}
-
-	switch config.Format {
-	case "rolling":
-		fconf := NewRollingHandler()
-		err = meta.PrimitiveDecode(primitive, &fconf)
-		if err != nil {
-			return nil, fmt.Errorf("rolling config: %v", err)
-		}
-		handler, err := fconf.Parse()
-		if err != nil {
-			return nil, err
-		}
-		subhandler, err := parseFormatter(meta, fconf.SubHandler)
-		if err != nil {
-			return nil, err
-		}
-		handler.formatter = subhandler.formatter
-		return handler, nil
-	case "zalgo":
-		fconf := NewZalgoHandler()
-		err = meta.PrimitiveDecode(primitive, &fconf)
-		if err != nil {
-			return nil, fmt.Errorf("zalgo config: %v", err)
-		}
-		return fconf.Parse()
-	case "syslog":
-		fconf := NewSysLogHandler()
-		err = meta.PrimitiveDecode(primitive, &fconf)
-		if err != nil {
-			return nil, fmt.Errorf("syslog config: %v", err)
-		}
-		return fconf.Parse()
-	case "sentry":
-		fconf := NewSentryHandler()
-		err = meta.PrimitiveDecode(primitive, &fconf)
-		if err != nil {
-			return nil, fmt.Errorf("sentry config: %v", err)
-		}
-		return fconf.Parse()
-	case "logstash":
-		fconf := NewLogstashHandler()
-		err = meta.PrimitiveDecode(primitive, &fconf)
-		if err != nil {
-			return nil, fmt.Errorf("logstash config: %v", err)
-		}
-		return fconf.Parse()
-	case "elastic":
-		fconf := NewElasticHandler()
-		err = meta.PrimitiveDecode(primitive, &fconf)
-		if err != nil {
-			return nil, fmt.Errorf("elastic config: %v", err)
-		}
-		return fconf.Parse()
-	case "slack":
-		fconf := NewSlackHandler()
-		err = meta.PrimitiveDecode(primitive, &fconf)
-		if err != nil {
-			return nil, fmt.Errorf("slack config: %v", err)
-		}
-		return fconf.Parse()
-	case "aws":
-		fconf := NewAWSHandler()
-		err = meta.PrimitiveDecode(primitive, &fconf)
-		if err != nil {
-			return nil, fmt.Errorf("aws config: %v", err)
-		}
-		return fconf.Parse()
-	case "gcloud":
-		fconf := NewGCloudHandler()
-		err = meta.PrimitiveDecode(primitive, &fconf)
-		if err != nil {
-			return nil, fmt.Errorf("gcloud config: %v", err)
-		}
-		return fconf.Parse()
-	case "graylog":
-		fconf := NewGraylogHandler()
-		err = meta.PrimitiveDecode(primitive, &fconf)
-		if err != nil {
-			return nil, fmt.Errorf("graylog config: %v", err)
-		}
-		return fconf.Parse()
-	case "fluentd":
-		fconf := NewFluentdHandler()
-		err = meta.PrimitiveDecode(primitive, &fconf)
-		if err != nil {
-			return nil, fmt.Errorf("fluentd config: %v", err)
-		}
-		return fconf.Parse()
-	case "mongodb":
-		fconf := NewMongoDBHandler()
-		err = meta.PrimitiveDecode(primitive, &fconf)
-		if err != nil {
-			return nil, fmt.Errorf("mongodb config: %v", err)
-		}
-		return fconf.Parse()
-	case "redis":
-		fconf := NewRedisHandler()
-		err = meta.PrimitiveDecode(primitive, &fconf)
-		if err != nil {
-			return nil, fmt.Errorf("redis config: %v", err)
-		}
-		return fconf.Parse()
-	case "influxdb":
-		fconf := NewInfluxDBHandler()
-		err = meta.PrimitiveDecode(primitive, &fconf)
-		if err != nil {
-			return nil, fmt.Errorf("influxdb config: %v", err)
-		}
-		return fconf.Parse()
-	case "discord":
-		fconf := NewDiscordHandler()
-		err = meta.PrimitiveDecode(primitive, &fconf)
-		if err != nil {
-			return nil, fmt.Errorf("discord config: %v", err)
-		}
-		return fconf.Parse()
-	case "loggly":
-		fconf := NewLogglyHandler()
-		err = meta.PrimitiveDecode(primitive, &fconf)
-		if err != nil {
-			return nil, fmt.Errorf("loggly config: %v", err)
-		}
-		return fconf.Parse()
-	default:
-		return ParseHandler(meta, primitive)
-	}
 }

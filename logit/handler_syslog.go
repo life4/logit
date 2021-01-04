@@ -5,6 +5,7 @@ import (
 	"log/syslog"
 	"strings"
 
+	"github.com/BurntSushi/toml"
 	syslogrus "github.com/sirupsen/logrus/hooks/syslog"
 )
 
@@ -65,4 +66,22 @@ func (config SysLogHandler) parsedPriority() (syslog.Priority, error) {
 		return syslog.LOG_DEBUG, nil
 	}
 	return syslog.Priority(0), fmt.Errorf("unknown priority: %s", config.Priority)
+}
+
+func init() {
+	RegisterParser("syslog", func(
+		meta toml.MetaData,
+		primitive toml.Primitive,
+	) (*Handler, error) {
+		fconf := NewSysLogHandler()
+		err := meta.PrimitiveDecode(primitive, &fconf)
+		if err != nil {
+			return nil, fmt.Errorf("parse: %v", err)
+		}
+		handler, err := fconf.Parse()
+		if err != nil {
+			return nil, fmt.Errorf("init: %v", err)
+		}
+		return handler, nil
+	})
 }

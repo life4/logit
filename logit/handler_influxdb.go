@@ -1,7 +1,10 @@
 package logit
 
 import (
+	"fmt"
+
 	"github.com/Abramovic/logrus_influxdb"
+	"github.com/BurntSushi/toml"
 )
 
 type InfluxDBHandler struct {
@@ -49,4 +52,22 @@ func (config InfluxDBHandler) Parse() (*Handler, error) {
 	}
 	h.hook = hook
 	return h, nil
+}
+
+func init() {
+	RegisterParser("influxdb", func(
+		meta toml.MetaData,
+		primitive toml.Primitive,
+	) (*Handler, error) {
+		fconf := NewInfluxDBHandler()
+		err := meta.PrimitiveDecode(primitive, &fconf)
+		if err != nil {
+			return nil, fmt.Errorf("parse: %v", err)
+		}
+		handler, err := fconf.Parse()
+		if err != nil {
+			return nil, fmt.Errorf("init: %v", err)
+		}
+		return handler, nil
+	})
 }

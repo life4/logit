@@ -1,6 +1,9 @@
 package logit
 
 import (
+	"fmt"
+
+	"github.com/BurntSushi/toml"
 	"github.com/sebest/logrusly"
 	"github.com/sirupsen/logrus"
 )
@@ -33,4 +36,22 @@ func (config LogglyHandler) Parse() (*Handler, error) {
 	}
 	h.hook = hook
 	return h, nil
+}
+
+func init() {
+	RegisterParser("loggly", func(
+		meta toml.MetaData,
+		primitive toml.Primitive,
+	) (*Handler, error) {
+		fconf := NewLogglyHandler()
+		err := meta.PrimitiveDecode(primitive, &fconf)
+		if err != nil {
+			return nil, fmt.Errorf("parse: %v", err)
+		}
+		handler, err := fconf.Parse()
+		if err != nil {
+			return nil, fmt.Errorf("init: %v", err)
+		}
+		return handler, nil
+	})
 }

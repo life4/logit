@@ -3,6 +3,7 @@ package logit
 import (
 	"fmt"
 
+	"github.com/BurntSushi/toml"
 	"github.com/kenshaw/sdhook"
 )
 
@@ -46,4 +47,22 @@ func (config GCloudHandler) Parse() (*Handler, error) {
 	h.hook = hook
 	h.wait = hook.Wait
 	return h, nil
+}
+
+func init() {
+	RegisterParser("gcloud", func(
+		meta toml.MetaData,
+		primitive toml.Primitive,
+	) (*Handler, error) {
+		fconf := NewGCloudHandler()
+		err := meta.PrimitiveDecode(primitive, &fconf)
+		if err != nil {
+			return nil, fmt.Errorf("parse: %v", err)
+		}
+		handler, err := fconf.Parse()
+		if err != nil {
+			return nil, fmt.Errorf("init: %v", err)
+		}
+		return handler, nil
+	})
 }
