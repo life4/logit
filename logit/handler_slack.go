@@ -1,3 +1,5 @@
+// +build h_slack h_all
+
 package logit
 
 import (

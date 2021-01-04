@@ -1,3 +1,5 @@
+// +build h_redis h_all
+
 package logit
 
 import (

@@ -1,3 +1,5 @@
+// +build h_elastic h_all
+
 package logit
 
 import (

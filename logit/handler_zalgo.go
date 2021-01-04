@@ -1,3 +1,5 @@
+// +build h_zalgo h_all
+
 package logit
 
 import (

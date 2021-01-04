@@ -1,3 +1,5 @@
+// +build h_aws h_all
+
 package logit
 
 import (

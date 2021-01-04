@@ -1,3 +1,5 @@
+// +build h_mongodb h_all
+
 package logit
 
 import (

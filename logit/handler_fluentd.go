@@ -1,3 +1,5 @@
+// +build h_fluentd h_all
+
 package logit
 
 import (

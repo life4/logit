@@ -1,3 +1,5 @@
+// +build h_loggly h_all
+
 package logit
 
 import (

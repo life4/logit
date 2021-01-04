@@ -1,3 +1,5 @@
+// +build h_discord h_all
+
 package logit
 
 import (

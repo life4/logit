@@ -1,3 +1,5 @@
+// +build h_rolling h_all
+
 package logit
 
 import (

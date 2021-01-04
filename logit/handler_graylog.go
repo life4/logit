@@ -1,3 +1,5 @@
+// +build h_graylog h_all
+
 package logit
 
 import (

@@ -1,3 +1,5 @@
+// +build h_sentry h_all
+
 package logit
 
 import (

@@ -1,3 +1,5 @@
+// +build h_influxdb h_all
+
 package logit
 
 import (
