@@ -10,9 +10,16 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// Levels represent configuration for default levels
+type Levels struct {
+	Default logrus.Level
+	Error   logrus.Level
+}
+
 type Logger struct {
-	config   Config
-	handlers []Handler
+	Levels   Levels
+	Handlers []Handler
+	Fields   CFields
 	now      func() time.Time
 }
 
@@ -20,7 +27,7 @@ func (log Logger) Parse(line string) (*logrus.Entry, error) {
 	// If non-JSON passed, use it as message, set the default level
 	if line == "" || line[0] != '{' {
 		entry := logrus.NewEntry(nil)
-		entry.Level = log.config.Levels.Default
+		entry.Level = log.Levels.Default
 		entry.Message = line
 		entry.Time = log.now()
 		return entry, nil
@@ -34,7 +41,7 @@ func (log Logger) Parse(line string) (*logrus.Entry, error) {
 	}
 
 	// extract message
-	msgRaw, ok := e.Data[log.config.Fields.Message]
+	msgRaw, ok := e.Data[log.Fields.Message]
 	if !ok {
 		return nil, errors.New("cannot find message field")
 	}
@@ -42,10 +49,10 @@ func (log Logger) Parse(line string) (*logrus.Entry, error) {
 	if !ok {
 		return nil, errors.New("message is not a string")
 	}
-	delete(e.Data, log.config.Fields.Message)
+	delete(e.Data, log.Fields.Message)
 
 	// extract level
-	lvlRaw, ok := e.Data[log.config.Fields.Level]
+	lvlRaw, ok := e.Data[log.Fields.Level]
 	if !ok {
 		return nil, errors.New("cannot find level field")
 	}
@@ -57,10 +64,10 @@ func (log Logger) Parse(line string) (*logrus.Entry, error) {
 	if err != nil {
 		return nil, err
 	}
-	delete(e.Data, log.config.Fields.Level)
+	delete(e.Data, log.Fields.Level)
 
 	// extract time
-	timeRaw, ok := e.Data[log.config.Fields.Time]
+	timeRaw, ok := e.Data[log.Fields.Time]
 	if ok {
 		timeStr, ok := timeRaw.(string)
 		if !ok {
@@ -70,7 +77,7 @@ func (log Logger) Parse(line string) (*logrus.Entry, error) {
 		if err != nil {
 			return nil, err
 		}
-		delete(e.Data, log.config.Fields.Time)
+		delete(e.Data, log.Fields.Time)
 	} else {
 		e.Time = log.now()
 	}
@@ -79,13 +86,13 @@ func (log Logger) Parse(line string) (*logrus.Entry, error) {
 }
 
 func (log Logger) Wait() {
-	for _, handler := range log.handlers {
+	for _, handler := range log.Handlers {
 		handler.Wait()
 	}
 }
 
 func (log Logger) Log(entry *logrus.Entry) error {
-	for _, handler := range log.handlers {
+	for _, handler := range log.Handlers {
 		// run in background
 		if handler.Async {
 			go func() {
@@ -109,19 +116,8 @@ func (log Logger) Log(entry *logrus.Entry) error {
 func (log Logger) LogError(err error, msg string) error {
 	entry := logrus.NewEntry(nil)
 	entry = entry.WithError(err)
-	entry.Level = log.config.Levels.Error
+	entry.Level = log.Levels.Error
 	entry.Message = msg
+	entry.Time = log.now()
 	return log.Log(entry)
-}
-
-func NewLogger(config Config) (Logger, error) {
-	log := Logger{
-		handlers: make([]Handler, len(config.Handlers)),
-		now:      time.Now,
-	}
-	for i, handler := range config.Handlers {
-		log.handlers[i] = handler
-	}
-	log.config = config
-	return log, nil
 }

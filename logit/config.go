@@ -2,6 +2,8 @@ package logit
 
 import (
 	"fmt"
+	"io/ioutil"
+	"time"
 
 	"github.com/BurntSushi/toml"
 	"github.com/sirupsen/logrus"
@@ -29,20 +31,17 @@ type RawConfig struct {
 	HandlersRaw []toml.Primitive `toml:"handler"`
 }
 
-type Levels struct {
-	Default logrus.Level
-	Error   logrus.Level
+// ReadLogger reads configuration file by the given path and returns Logger instance.
+func ReadLogger(cpath string) (*Logger, error) {
+	bytes, err := ioutil.ReadFile(cpath)
+	if err != nil {
+		return nil, fmt.Errorf("cannot read config file: %v", err)
+	}
+	return MakeLogger(string(bytes))
 }
 
-// RawConfig represents the config how it is used internally.
-// It is generated from RawConfig.
-type Config struct {
-	Levels   Levels
-	Handlers []Handler
-	Fields   CFields
-}
-
-func ReadConfig(cpath string) (*Config, error) {
+// MakeLogger parses the given configuration file and returns Logger instance.
+func MakeLogger(content string) (*Logger, error) {
 	raw := RawConfig{
 		Levels: CLevels{
 			Default: "INFO",
@@ -55,12 +54,12 @@ func ReadConfig(cpath string) (*Config, error) {
 		},
 	}
 
-	meta, err := toml.DecodeFile(cpath, &raw)
+	meta, err := toml.Decode(content, &raw)
 	if err != nil {
 		return nil, fmt.Errorf("cannot read config: %v", err)
 	}
 
-	config := Config{
+	logger := Logger{
 		Handlers: make([]Handler, len(raw.HandlersRaw)),
 	}
 	for i, primitive := range raw.HandlersRaw {
@@ -68,7 +67,7 @@ func ReadConfig(cpath string) (*Config, error) {
 		if err != nil {
 			return nil, fmt.Errorf("cannot parse handler: %v", err)
 		}
-		config.Handlers[i] = *handler
+		logger.Handlers[i] = *handler
 	}
 
 	undecoded := meta.Undecoded()
@@ -76,15 +75,16 @@ func ReadConfig(cpath string) (*Config, error) {
 		return nil, fmt.Errorf("unknown fields: %v", undecoded)
 	}
 
-	config.Levels.Default, err = logrus.ParseLevel(raw.Levels.Default)
+	logger.Levels.Default, err = logrus.ParseLevel(raw.Levels.Default)
 	if err != nil {
 		return nil, fmt.Errorf("cannot parse levels.default: %v", err)
 	}
-	config.Levels.Error, err = logrus.ParseLevel(raw.Levels.Error)
+	logger.Levels.Error, err = logrus.ParseLevel(raw.Levels.Error)
 	if err != nil {
 		return nil, fmt.Errorf("cannot parse levels.error: %v", err)
 	}
 
-	config.Fields = raw.Fields
-	return &config, nil
+	logger.Fields = raw.Fields
+	logger.now = time.Now
+	return &logger, nil
 }

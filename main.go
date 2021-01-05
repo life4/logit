@@ -14,13 +14,7 @@ func main() {
 	pflag.StringVarP(&cpath, "config", "c", "logit.toml", "path to the config file")
 	pflag.Parse()
 
-	config, err := logit.ReadConfig(cpath)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-
-	log, err := logit.NewLogger(*config)
+	log, err := logit.ReadLogger(cpath)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
