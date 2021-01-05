@@ -1,7 +1,9 @@
 package logit
 
 import (
+	"bytes"
 	"errors"
+	"strings"
 	"testing"
 	"time"
 
@@ -72,6 +74,44 @@ func Test_Logger_Parse(t *testing.T) {
 			}
 			is.Nil(err)
 			is.Equal(*e, tcase.exp)
+		})
+	}
+}
+
+func Test_Logger_Log(t *testing.T) {
+	testCases := []struct {
+		desc string
+		line string
+		exp  string
+	}{
+		{
+			desc: "simple json",
+			line: `{"level":"fatal","msg":"A huge walrus appears","time":"2020-12-29 15:09:21"}`,
+			exp:  `time="2020-12-29 15:09:21" level=fatal msg="A huge walrus appears"`,
+		},
+		{
+			desc: "json with field",
+			line: `{"animal":"walrus","level":"fatal","msg":"A huge walrus appears","time":"2020-12-29 15:09:21"}`,
+			exp:  `time="2020-12-29 15:09:21" level=fatal msg="A huge walrus appears" animal=walrus`,
+		},
+	}
+	config := `
+		[[handler]]
+		format = "logfmt"
+	`
+
+	for _, tcase := range testCases {
+		t.Run(tcase.desc, func(t *testing.T) {
+			t.Parallel()
+			is := require.New(t)
+			log, err := MakeLogger(config)
+			is.Nil(err)
+			var b bytes.Buffer
+			log.SetStream(&b)
+			err = log.Log(log.SafeParse(tcase.line))
+			is.Nil(err)
+			actual := b.String()
+			is.Equal(strings.TrimSpace(strings.TrimSuffix(actual, "\n")), tcase.exp)
 		})
 	}
 }

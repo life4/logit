@@ -115,12 +115,12 @@ func (log Logger) Log(entry *logrus.Entry) error {
 	for _, handler := range log.Handlers {
 		// run in background
 		if handler.Async {
-			go func() {
+			go func(handler Handler) {
 				err := handler.Log(entry)
 				if err != nil {
 					fmt.Printf("cannot write log entry: %v", err)
 				}
-			}()
+			}(*handler)
 			continue
 		}
 

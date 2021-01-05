@@ -56,7 +56,7 @@ func MakeLogger(content string) (*Logger, error) {
 
 	meta, err := toml.Decode(content, &raw)
 	if err != nil {
-		return nil, fmt.Errorf("cannot read config: %v", err)
+		return nil, fmt.Errorf("cannot parse config: %v", err)
 	}
 
 	logger := Logger{
