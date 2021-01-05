@@ -9,21 +9,6 @@ import (
 	"github.com/spf13/pflag"
 )
 
-// handle parses the given text line and logs it.
-// Error returned if the record cannot be logged.
-// Basically, it can happen only if something is wrong in handler upstream.
-// So, the returned error shouldn't be logged by the logger itself.
-func handle(log *logit.Logger, line string) error {
-	// parse
-	entry, err := log.Parse(line)
-	if err != nil {
-		err = fmt.Errorf("cannot parse entry: %v", err)
-		return log.LogError(err, line)
-	}
-	// log
-	return log.Log(entry)
-}
-
 func main() {
 	var cpath string
 	pflag.StringVarP(&cpath, "config", "c", "logit.toml", "path to the config file")
@@ -37,7 +22,7 @@ func main() {
 
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
-		err = handle(log, scanner.Text())
+		err = log.Log(log.SafeParse(scanner.Text()))
 		if err != nil {
 			fmt.Println(err)
 		}

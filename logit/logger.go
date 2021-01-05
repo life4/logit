@@ -30,6 +30,19 @@ func (log *Logger) SetStream(stream io.Writer) {
 	}
 }
 
+func (log Logger) SafeParse(line string) *logrus.Entry {
+	entry, err := log.Parse(line)
+	if err != nil {
+		err = fmt.Errorf("cannot parse entry: %v", err)
+		entry = logrus.NewEntry(nil)
+		entry = entry.WithError(err)
+		entry.Level = log.Levels.Error
+		entry.Message = line
+		entry.Time = log.now()
+	}
+	return entry
+}
+
 func (log Logger) Parse(line string) (*logrus.Entry, error) {
 	// If non-JSON passed, use it as message, set the default level
 	if line == "" || line[0] != '{' {
@@ -118,13 +131,4 @@ func (log Logger) Log(entry *logrus.Entry) error {
 		}
 	}
 	return nil
-}
-
-func (log Logger) LogError(err error, msg string) error {
-	entry := logrus.NewEntry(nil)
-	entry = entry.WithError(err)
-	entry.Level = log.Levels.Error
-	entry.Message = msg
-	entry.Time = log.now()
-	return log.Log(entry)
 }

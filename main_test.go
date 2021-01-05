@@ -39,7 +39,7 @@ func Test_handle(t *testing.T) {
 			is.Nil(err)
 			var b bytes.Buffer
 			log.SetStream(&b)
-			err = handle(log, tcase.line)
+			err = log.Log(log.SafeParse(tcase.line))
 			is.Nil(err)
 			actual := b.String()
 			is.Equal(strings.TrimSpace(strings.TrimSuffix(actual, "\n")), tcase.exp)
