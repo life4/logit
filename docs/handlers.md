@@ -123,4 +123,38 @@
 * fields:
   * ...
 
-...
+## Rolling
+
+* desc: rolling logging into a file (with file rotation).
+* slug: `rolling`
+* build tag: `h_clean,h_rolling`
+* core: [lumberjack](github.com/natefinch/lumberjack)
+* fields:
+  * ...
+
+## Sentry
+
+* desc: send logs into [Sentry](https://sentry.io/welcome/).
+* slug: `sentry`
+* build tag: `h_clean,h_sentry`
+* core: [logrus_sentry](https://github.com/evalphobia/logrus_sentry)
+* fields:
+  * ...
+
+## Slack
+
+* desc: send logs as messages into a [Slack](https://slack.com/intl/en-nl/) channel.
+* slug: `slack`
+* build tag: `h_clean,h_slack`
+* core: [slackrus](https://github.com/johntdyer/slackrus)
+* fields:
+  * ...
+
+## Syslog
+
+* desc: send logs using [syslog](https://en.wikipedia.org/wiki/Syslog) protocol (for example, into [rsyslog](https://www.rsyslog.com/)).
+* slug: `syslog`
+* build tag: `h_clean,h_syslog`
+* core: [logrus/syslog](https://github.com/sirupsen/logrus/tree/master/hooks/syslog)
+* fields:
+  * ...

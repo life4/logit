@@ -11,24 +11,29 @@ Why it is important:
 
 Supported handlers:
 
-* `discord`
-* `elastic`
-* `fluentd`
-* `gcloud`
-* `graylog`
-* `influxdb`
-* `json`
-* `logfmt`
-* `loggly`
-* `logstash`
-* `mongodb`
-* `redis`
-* `rolling`
-* `sentry`
-* `slack`
-* `syslog`
-* `text`
-* `zalgo`
+* console and files:
+  * `json`
+  * `logfmt`
+  * `rolling`
+  * `text`
+  * `zalgo`
+* databases:
+  * `elastic`
+  * `influxdb`
+  * `mongodb`
+  * `redis`
+* messengers:
+  * `discord`
+  * `slack`
+* log collectors:
+  * `aws`
+  * `fluentd`
+  * `gcloud`
+  * `graylog`
+  * `sentry`
+  * `syslog`
+  * `loggly`
+  * `logstash`
 
 ## Installation
 
@@ -74,6 +79,8 @@ INFO   [2021-01-04 14:48:50] hi
 
 Easy!
 
+See [documentation](./docs/config.md) for more details.
+
 ## Producing JSON
 
 There are some good libraries that you can use in your application to produce JSON logs:
@@ -88,29 +95,3 @@ Node.js:
   * [python-json-logger](https://github.com/madzak/python-json-logger): formatter for the default [logging](https://docs.python.org/3/library/logging.html).
 Rust:
   * [slog-json](https://github.com/slog-rs/json) for [slog-rs](https://github.com/slog-rs/slog).
-
-## Configuration
-
-Basics:
-
-* You can specify as many handlers as you want, and every handler will be called for every log entry.
-* Every `[[handler]]` section must have `format` option which specifies the handler type.
-* Every format has it's own options which you can find in [docs/handlers.toml](./docs/handlers.toml). Some options are common and secribed below.
-* Options `level_from` and `level_to` allow to filter out by level records that the handler will process. Example:
-
-    ```toml
-    # `text` handler will handle `trace`, `debug`, and `info`
-    [[handler]]
-    format = "text"
-    level_to = "info"
-
-    # `json` handler will handle `warning`, `error`, `fatal`, and `panic`
-    [[handler]]
-    format = "json"
-    level_from = "warning"
-    ```
-
-* Supported levels: `trace`, `debug`, `info`, `warning`, `error`, `fatal`, and `panic`.
-* Option `async` makes logit to run a separate [goroutine](https://golangbot.com/goroutines/) (kind of a cheap thread) for every handler call (for every log entry). It is useful for some network-based handlers.
-
-See [docs/handlers.toml](./docs/handlers.toml) for handler-specific configuration options.
