@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"time"
 
 	"github.com/araddon/dateparse"
@@ -18,9 +19,15 @@ type Levels struct {
 
 type Logger struct {
 	Levels   Levels
-	Handlers []Handler
+	Handlers []*Handler
 	Fields   CFields
 	now      func() time.Time
+}
+
+func (log *Logger) SetStream(stream io.Writer) {
+	for _, h := range log.Handlers {
+		h.stream = stream
+	}
 }
 
 func (log Logger) Parse(line string) (*logrus.Entry, error) {

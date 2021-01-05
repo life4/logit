@@ -60,14 +60,14 @@ func MakeLogger(content string) (*Logger, error) {
 	}
 
 	logger := Logger{
-		Handlers: make([]Handler, len(raw.HandlersRaw)),
+		Handlers: make([]*Handler, len(raw.HandlersRaw)),
 	}
 	for i, primitive := range raw.HandlersRaw {
 		handler, err := ParseHandler(meta, primitive)
 		if err != nil {
 			return nil, fmt.Errorf("cannot parse handler: %v", err)
 		}
-		logger.Handlers[i] = *handler
+		logger.Handlers[i] = handler
 	}
 
 	undecoded := meta.Undecoded()
