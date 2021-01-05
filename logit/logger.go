@@ -26,25 +26,26 @@ func (log Logger) Parse(line string) (*logrus.Entry, error) {
 		return entry, nil
 	}
 
-	fields := make(logrus.Fields)
-	err := json.Unmarshal([]byte(line), &fields)
+	e := logrus.NewEntry(nil)
+
+	err := json.Unmarshal([]byte(line), &e.Data)
 	if err != nil {
 		return nil, err
 	}
 
 	// extract message
-	msgRaw, ok := fields[log.config.Fields.Message]
+	msgRaw, ok := e.Data[log.config.Fields.Message]
 	if !ok {
 		return nil, errors.New("cannot find message field")
 	}
-	msgStr, ok := msgRaw.(string)
+	e.Message, ok = msgRaw.(string)
 	if !ok {
 		return nil, errors.New("message is not a string")
 	}
-	delete(fields, log.config.Fields.Message)
+	delete(e.Data, log.config.Fields.Message)
 
 	// extract level
-	lvlRaw, ok := fields[log.config.Fields.Level]
+	lvlRaw, ok := e.Data[log.config.Fields.Level]
 	if !ok {
 		return nil, errors.New("cannot find level field")
 	}
@@ -52,35 +53,28 @@ func (log Logger) Parse(line string) (*logrus.Entry, error) {
 	if !ok {
 		return nil, errors.New("level is not a string")
 	}
-	lvl, err := logrus.ParseLevel(lvlStr)
+	e.Level, err = logrus.ParseLevel(lvlStr)
 	if err != nil {
 		return nil, err
 	}
-	delete(fields, log.config.Fields.Level)
+	delete(e.Data, log.config.Fields.Level)
 
 	// extract time
-	var etime time.Time
-	timeRaw, ok := fields[log.config.Fields.Time]
+	timeRaw, ok := e.Data[log.config.Fields.Time]
 	if ok {
 		timeStr, ok := timeRaw.(string)
 		if !ok {
 			return nil, errors.New("time is not a string")
 		}
-		etime, err = dateparse.ParseAny(timeStr)
+		e.Time, err = dateparse.ParseAny(timeStr)
 		if err != nil {
 			return nil, err
 		}
-		delete(fields, log.config.Fields.Time)
+		delete(e.Data, log.config.Fields.Time)
 	} else {
-		etime = log.now()
+		e.Time = log.now()
 	}
 
-	e := logrus.NewEntry(nil)
-	e = e.WithFields(fields)
-
-	e.Message = msgStr
-	e.Level = lvl
-	e.Time = etime
 	return e, nil
 }
 
