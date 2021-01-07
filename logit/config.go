@@ -28,6 +28,7 @@ type CFields struct {
 type RawConfig struct {
 	Levels      CLevels
 	Fields      CFields
+	Defaults    logrus.Fields
 	HandlersRaw []toml.Primitive `toml:"handler"`
 }
 
@@ -52,6 +53,7 @@ func MakeLogger(content string) (*Logger, error) {
 			Level:   "level",
 			Time:    "time",
 		},
+		Defaults: logrus.Fields{},
 	}
 
 	meta, err := toml.Decode(content, &raw)
@@ -85,6 +87,7 @@ func MakeLogger(content string) (*Logger, error) {
 	}
 
 	logger.Fields = raw.Fields
+	logger.Defaults = raw.Defaults
 	logger.now = time.Now
 	return &logger, nil
 }

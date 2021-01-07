@@ -21,6 +21,7 @@ type Logger struct {
 	Levels   Levels
 	Handlers []Handler
 	Fields   CFields
+	Defaults logrus.Fields
 	now      func() time.Time
 }
 
@@ -50,10 +51,12 @@ func (log Logger) Parse(line string) (*logrus.Entry, error) {
 		entry.Level = log.Levels.Default
 		entry.Message = line
 		entry.Time = log.now()
+		entry.Data = log.Defaults
 		return entry, nil
 	}
 
 	e := logrus.NewEntry(nil)
+	e.Data = logrus.Fields(log.Defaults)
 
 	err := json.Unmarshal([]byte(line), &e.Data)
 	if err != nil {

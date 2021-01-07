@@ -41,6 +41,22 @@ level   = "level"
 time    = "time"
 ```
 
+## Defaults
+
+You can provide any default fields to be included in every message:
+
+```toml
+[defaults]
+app_name = "my fancy app"
+```
+
+## Types
+
+Some handlers fields are strings parsed in an unified way:
+
+* Timestamp format. Default: `"YYYY-MM-dd HH:mm:ss"`. It is parsed as [joda time](http://joda-time.sourceforge.net/apidocs/org/joda/time/format/DateTimeFormat.html) using [jodaTime](https://github.com/vjeantet/jodaTime) package.
+* Duration is parsed using [time.ParseDuration](https://golang.org/pkg/time/#ParseDuration). A few examples: `20s`, `24h`, `1h10m10s`.
+
 ## Handlers
 
 * You can specify as many handlers as you want, and every handler will be called for every log entry.
