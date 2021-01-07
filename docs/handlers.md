@@ -31,7 +31,11 @@
 * build tag: `h_clean,h_aws`
 * core: [logrus-cloudwatchlogs](https://github.com/kdar/logrus-cloudwatchlogs)
 * fields:
-  * ...
+  * `region` (string, `"us-east-1"`)
+  * `group` (string)
+  * `stream` (string)
+  * `max_retries` (int, `-1`)
+  * `ssl` (bool, `true`)
 
 ## Discord
 
@@ -40,7 +44,11 @@
 * build tag: `h_clean,h_discord`
 * core: [discordrus](github.com/kz/discordrus)
 * fields:
-  * ...
+  * `url` (string)
+  * `username` (string, `"logit"`)
+  * `author` (string)
+  * `inline` (bool, `true`)
+  * `timestamp` (string, `"YYYY-MM-dd HH:mm:ss"`)
 
 ## Elastic
 

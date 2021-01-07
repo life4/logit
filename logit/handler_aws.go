@@ -17,13 +17,16 @@ type AWSHandler struct {
 	Region     string
 	Group      string
 	Stream     string
-	MaxRetries int
+	MaxRetries int `toml:"max_retries"`
+	SSL        bool
 }
 
 func NewAWSHandler() AWSHandler {
 	return AWSHandler{
 		BaseHandler: NewBaseHandler(),
 		Region:      "us-east-1",
+		MaxRetries:  -1,
+		SSL:         true,
 	}
 }
 
@@ -33,6 +36,7 @@ func (config AWSHandler) Parse() (Handler, error) {
 		Config: aws.Config{
 			Region:     &config.Region,
 			MaxRetries: &config.MaxRetries,
+			DisableSSL: &config.SSL,
 		},
 	})
 	if err != nil {
