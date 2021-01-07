@@ -22,13 +22,14 @@ type SlackHandler struct {
 func NewSlackHandler() SlackHandler {
 	return SlackHandler{
 		BaseHandler: NewBaseHandler(),
+		Username:    "logit",
 	}
 }
 
 func (config SlackHandler) Parse() (Handler, error) {
 	hook := slackrus.SlackrusHook{
 		HookURL:        config.HookURL,
-		AcceptedLevels: slackrus.LevelThreshold(logrus.TraceLevel),
+		AcceptedLevels: logrus.AllLevels,
 		Channel:        config.Channel,
 		IconEmoji:      config.IconEmoji,
 		Username:       config.Username,

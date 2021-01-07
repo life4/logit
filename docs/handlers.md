@@ -24,6 +24,15 @@
 * fields:
   * ...
 
+## Rolling
+
+* desc: rolling logging into a file (with file rotation).
+* slug: `rolling`
+* build tag: `h_clean,h_rolling`
+* core: [lumberjack](github.com/natefinch/lumberjack)
+* fields:
+  * ...
+
 ## AWS
 
 * desc: save logs into [Amazon CloudWatch](https://aws.amazon.com/cloudwatch/).
@@ -57,7 +66,9 @@
 * build tag: `h_clean,h_elastic`
 * core: [elogrus](https://github.com/sohlich/elogrus)
 * fields:
-  * ...
+  * `urls` (array of strings, `["http://localhost:9200"]`)
+  * `host` (string, `"localhost"`)
+  * `index` (string, `"logit"`)
 
 ## Fluentd
 
@@ -66,7 +77,9 @@
 * build tag: `h_clean,h_fluentd`
 * core: [logrus_fluent](https://github.com/evalphobia/logrus_fluent)
 * fields:
-  * ...
+  * `host` (string, `"localhost"`)
+  * `port` (int, `24224`)
+  * `max_retry` (int, `0`)
 
 ## GCloud
 
@@ -75,7 +88,10 @@
 * build tag: `h_clean,h_gcloud`
 * core: [sdhook](https://github.com/kenshaw/sdhook)
 * fields:
-  * ...
+  * `credentials` (string)
+  * `service` (string)
+  * `log_name` (string)
+  * `project_id` (string)
 
 ## Graylog
 
@@ -84,7 +100,7 @@
 * build tag: `h_clean,h_graylog`
 * core: [logrus-graylog-hook](https://github.com/gemnasium/logrus-graylog-hook)
 * fields:
-  * ...
+  * `address` (string)
 
 ## InfluxDB
 
@@ -93,7 +109,14 @@
 * build tag: `h_clean,h_influxdb`
 * core: [logrus_influxdb](https://github.com/Abramovic/logrus_influxdb)
 * fields:
-  * ...
+  * `host` (string, `"localhost"`)
+  * `port` (string, `6379`)
+  * `username` (string)
+  * `password` (string)
+  * `database` (string, `"logit"`)
+  * `precision` (string, `"ns"`)
+  * `use_https` (bool, `false`)
+  * `batch_count` (int, `0`)
 
 ## Loggly
 
@@ -102,7 +125,9 @@
 * build tag: `h_clean,h_loggly`
 * core: [logrusly](https://github.com/sebest/logrusly)
 * fields:
-  * ...
+  * `token` (string)
+  * `host` (string)
+  * `tags` (list of strings)
 
 ## Logstash
 
@@ -111,7 +136,10 @@
 * build tag: `h_clean,h_logstash`
 * core: [logrus-logstash-hook](https://github.com/bshuster-repo/logrus-logstash-hook)
 * fields:
-  * ...
+  * `network` (string)
+  * `address` (string)
+  * `version` (string, `"1"`)
+  * `type` (string, `"logit"`)
 
 ## MongoDB
 
@@ -120,7 +148,9 @@
 * build tag: `h_clean,h_mongodb`
 * core: [mgorus](https://github.com/weekface/mgorus)
 * fields:
-  * ...
+  * `url` (string, `"localhost"`)
+  * `db` (string)
+  * `collection` (string)
 
 ## Redis
 
@@ -129,16 +159,15 @@
 * build tag: `h_clean,h_redis`
 * core: [logrus-redis-hook](https://github.com/rogierlommers/logrus-redis-hook)
 * fields:
-  * ...
-
-## Rolling
-
-* desc: rolling logging into a file (with file rotation).
-* slug: `rolling`
-* build tag: `h_clean,h_rolling`
-* core: [lumberjack](github.com/natefinch/lumberjack)
-* fields:
-  * ...
+  * `host` (string, `"localhost"`)
+  * `port` (int, `6379`)
+  * `password` (string)
+  * `key` (string, `"logit"`)
+  * `format` (string)
+  * `app` (string)
+  * `source_host` (string)
+  * `database` (int)
+  * `ttl` (int, `"1h"`)
 
 ## Sentry
 
@@ -147,7 +176,8 @@
 * build tag: `h_clean,h_sentry`
 * core: [logrus_sentry](https://github.com/evalphobia/logrus_sentry)
 * fields:
-  * ...
+  * `dsn` (string)
+  * `timeout` (string, `"20s"`)
 
 ## Slack
 
@@ -156,7 +186,11 @@
 * build tag: `h_clean,h_slack`
 * core: [slackrus](https://github.com/johntdyer/slackrus)
 * fields:
-  * ...
+  * `hook_url` (string)
+  * `icon_url` (string)
+  * `channel` (string)
+  * `icon_emoji` (string)
+  * `username` (string, `"logit"`)
 
 ## Syslog
 
@@ -165,4 +199,7 @@
 * build tag: `h_clean,h_syslog`
 * core: [logrus/syslog](https://github.com/sirupsen/logrus/tree/master/hooks/syslog)
 * fields:
-  * ...
+  * `network` (string, `"udp"`)
+  * `address` (string, `"localhost:514"`)
+  * `tag` (string, `"logit"`)
+  * `priority` (string, `"info"`)

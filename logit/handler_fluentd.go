@@ -13,7 +13,7 @@ type FluentdHandler struct {
 	BaseHandler
 	Host     string
 	Port     int
-	MaxRetry int
+	MaxRetry int `toml:"max_retry"`
 }
 
 func NewFluentdHandler() FluentdHandler {

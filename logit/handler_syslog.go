@@ -22,6 +22,9 @@ type SysLogHandler struct {
 func NewSysLogHandler() SysLogHandler {
 	return SysLogHandler{
 		BaseHandler: NewBaseHandler(),
+		Network:     "udp",
+		Address:     "localhost:514",
+		Priority:    "info",
 		Tag:         "logit",
 	}
 }

@@ -4,6 +4,7 @@ package logit
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/BurntSushi/toml"
 	logredis "github.com/rogierlommers/logrus-redis-hook"
@@ -21,7 +22,7 @@ type RedisHandler struct {
 	App        string
 	SourceHost string `toml:"source_host"`
 	Database   int
-	TTL        int
+	TTL        string
 }
 
 func NewRedisHandler() RedisHandler {
@@ -29,12 +30,16 @@ func NewRedisHandler() RedisHandler {
 		BaseHandler: NewBaseHandler(),
 		Host:        "localhost",
 		Port:        6379,
-		TTL:         3600,
+		TTL:         "1h",
 		Key:         "logit",
 	}
 }
 
 func (config RedisHandler) Parse() (Handler, error) {
+	ttl, err := time.ParseDuration(config.TTL)
+	if err != nil {
+		return nil, fmt.Errorf("cannot parse ttl: %v", err)
+	}
 	hook, err := logredis.NewHook(logredis.HookConfig{
 		Hostname: config.SourceHost,
 		Port:     config.Port,
@@ -45,7 +50,7 @@ func (config RedisHandler) Parse() (Handler, error) {
 		App:    config.App,
 		Host:   config.Host,
 		DB:     config.Database,
-		TTL:    config.TTL,
+		TTL:    int(ttl.Seconds()),
 	})
 	if err != nil {
 		return nil, err

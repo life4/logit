@@ -35,7 +35,7 @@ func (log Logger) SafeParse(line string) *logrus.Entry {
 	if err != nil {
 		err = fmt.Errorf("cannot parse entry: %v", err)
 		entry = logrus.NewEntry(nil)
-		entry = entry.WithError(err)
+		entry = entry.WithField("error", err.Error())
 		entry.Level = log.Levels.Error
 		entry.Message = line
 		entry.Time = log.now()
