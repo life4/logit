@@ -6,7 +6,9 @@
 * slug: `text`
 * core: [logrus](https://github.com/sirupsen/logrus#formatters)
 * fields:
-  * ...
+  * `timestamp` (string, `"YYYY-MM-dd HH:mm:ss"`)
+  * `sort` (bool, `true`)
+  * `truncate_level` (bool, `false`)
 
 ## LogFmt
 
@@ -14,7 +16,8 @@
 * slug: `logfmt`
 * core: [logrus](https://github.com/sirupsen/logrus#formatters)
 * fields:
-  * ...
+  * `timestamp` (string, `"YYYY-MM-dd HH:mm:ss"`)
+  * `sort` (bool, `true`)
 
 ## JSON
 
@@ -22,7 +25,8 @@
 * slug: `json`
 * core: [logrus](https://github.com/sirupsen/logrus#formatters)
 * fields:
-  * ...
+  * `data_key` (string)
+  * `timestamp` (string, `"YYYY-MM-dd HH:mm:ss"`)
 
 ## Rolling
 
@@ -31,7 +35,12 @@
 * build tag: `h_clean,h_rolling`
 * core: [lumberjack](github.com/natefinch/lumberjack)
 * fields:
-  * ...
+  * `file` (string)
+  * `max_size` (int, `500`)
+  * `max_age` (int, `28`)
+  * `max_backups` (int, `3`)
+  * `local_time` (bool, `false`)
+  * `compress` (bool, `false`)
 
 ## AWS
 
