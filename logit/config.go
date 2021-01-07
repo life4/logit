@@ -60,7 +60,7 @@ func MakeLogger(content string) (*Logger, error) {
 	}
 
 	logger := Logger{
-		Handlers: make([]*Handler, len(raw.HandlersRaw)),
+		Handlers: make([]Handler, len(raw.HandlersRaw)),
 	}
 	for i, primitive := range raw.HandlersRaw {
 		handler, err := ParseHandler(meta, primitive)

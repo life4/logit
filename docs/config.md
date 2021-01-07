@@ -60,6 +60,6 @@ time    = "time"
     level_from = "warning"
     ```
 
-* Option `async` makes logit to run a separate [goroutine](https://golangbot.com/goroutines/) (kind of a cheap thread) for every handler call (for every log entry). It is useful for some network-based handlers.
+* Option `workers = N` makes logit to run concurrently run N workers for the handler. It is useful for some network-based handlers. Some handlers handle concurrency on their side without providing an option to turn it off.
 
 See [handlers.md](./handlers.md) for handler-specific configuration options.

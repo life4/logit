@@ -19,12 +19,12 @@ func NewZalgoHandler() ZalgoHandler {
 	}
 }
 
-func (config ZalgoHandler) Parse() (*Handler, error) {
+func (config ZalgoHandler) Parse() (Handler, error) {
 	h, err := config.BaseHandler.Parse()
 	if err != nil {
 		return nil, err
 	}
-	h.formatter = logzalgo.NewZalgoFormatterrrrrr()
+	h.SetFormatter(logzalgo.NewZalgoFormatterrrrrr())
 	return h, nil
 }
 
@@ -32,7 +32,7 @@ func init() {
 	RegisterParser("zalgo", func(
 		meta toml.MetaData,
 		primitive toml.Primitive,
-	) (*Handler, error) {
+	) (Handler, error) {
 		fconf := NewZalgoHandler()
 		err := meta.PrimitiveDecode(primitive, &fconf)
 		if err != nil {

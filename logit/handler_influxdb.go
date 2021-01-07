@@ -33,7 +33,7 @@ func NewInfluxDBHandler() InfluxDBHandler {
 	}
 }
 
-func (config InfluxDBHandler) Parse() (*Handler, error) {
+func (config InfluxDBHandler) Parse() (Handler, error) {
 	hook, err := logrus_influxdb.NewInfluxDB(&logrus_influxdb.Config{
 		Host:       config.Host,
 		Port:       config.Port,
@@ -52,7 +52,7 @@ func (config InfluxDBHandler) Parse() (*Handler, error) {
 	if err != nil {
 		return nil, err
 	}
-	h.hook = hook
+	h.SetHook(hook)
 	return h, nil
 }
 
@@ -60,7 +60,7 @@ func init() {
 	RegisterParser("influxdb", func(
 		meta toml.MetaData,
 		primitive toml.Primitive,
-	) (*Handler, error) {
+	) (Handler, error) {
 		fconf := NewInfluxDBHandler()
 		err := meta.PrimitiveDecode(primitive, &fconf)
 		if err != nil {

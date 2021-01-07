@@ -23,7 +23,7 @@ func NewGCloudHandler() GCloudHandler {
 	}
 }
 
-func (config GCloudHandler) Parse() (*Handler, error) {
+func (config GCloudHandler) Parse() (Handler, error) {
 	options := []sdhook.Option{
 		sdhook.GoogleServiceAccountCredentialsFile(config.Credentials),
 	}
@@ -46,16 +46,26 @@ func (config GCloudHandler) Parse() (*Handler, error) {
 	if err != nil {
 		return nil, err
 	}
-	h.hook = hook
-	h.wait = hook.Wait
-	return h, nil
+	h.SetHook(hook)
+
+	// TODO: sdhook is always async. Can we force it to be sync?
+	// Contribute? The project seems dead.
+	switch handler := h.(type) {
+	case *HandlerAsync:
+		handler.handler.wait = hook.Wait
+		return &handler.handler, nil
+	case *HandlerSync:
+		handler.wait = hook.Wait
+		return handler, nil
+	}
+	panic("unreachable")
 }
 
 func init() {
 	RegisterParser("gcloud", func(
 		meta toml.MetaData,
 		primitive toml.Primitive,
-	) (*Handler, error) {
+	) (Handler, error) {
 		fconf := NewGCloudHandler()
 		err := meta.PrimitiveDecode(primitive, &fconf)
 		if err != nil {

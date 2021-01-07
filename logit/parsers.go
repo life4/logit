@@ -6,7 +6,7 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
-type Parser func(meta toml.MetaData, primitive toml.Primitive) (*Handler, error)
+type Parser func(meta toml.MetaData, primitive toml.Primitive) (Handler, error)
 type Parsers map[string]Parser
 
 var parsers = Parsers{}
@@ -19,7 +19,7 @@ func RegisterParser(name string, parser Parser) {
 	parsers[name] = parser
 }
 
-func ParseHandler(meta toml.MetaData, primitive toml.Primitive) (*Handler, error) {
+func ParseHandler(meta toml.MetaData, primitive toml.Primitive) (Handler, error) {
 	var config CHandler
 	err := meta.PrimitiveDecode(primitive, &config)
 	if err != nil {

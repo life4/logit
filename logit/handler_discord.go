@@ -28,7 +28,7 @@ func NewDiscordHandler() DiscordHandler {
 	}
 }
 
-func (config DiscordHandler) Parse() (*Handler, error) {
+func (config DiscordHandler) Parse() (Handler, error) {
 	hook := discordrus.NewHook(
 		config.URL,
 		logrus.TraceLevel,
@@ -45,7 +45,7 @@ func (config DiscordHandler) Parse() (*Handler, error) {
 	if err != nil {
 		return nil, err
 	}
-	h.hook = hook
+	h.SetHook(hook)
 	return h, nil
 }
 
@@ -53,7 +53,7 @@ func init() {
 	RegisterParser("discord", func(
 		meta toml.MetaData,
 		primitive toml.Primitive,
-	) (*Handler, error) {
+	) (Handler, error) {
 		fconf := NewDiscordHandler()
 		err := meta.PrimitiveDecode(primitive, &fconf)
 		if err != nil {

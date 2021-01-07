@@ -19,14 +19,14 @@ type Levels struct {
 
 type Logger struct {
 	Levels   Levels
-	Handlers []*Handler
+	Handlers []Handler
 	Fields   CFields
 	now      func() time.Time
 }
 
 func (log *Logger) SetStream(stream io.Writer) {
 	for _, h := range log.Handlers {
-		h.stream = stream
+		h.SetStream(stream)
 	}
 }
 
@@ -113,18 +113,6 @@ func (log Logger) Wait() {
 
 func (log Logger) Log(entry *logrus.Entry) error {
 	for _, handler := range log.Handlers {
-		// run in background
-		if handler.Async {
-			go func(handler Handler) {
-				err := handler.Log(entry)
-				if err != nil {
-					fmt.Printf("cannot write log entry: %v", err)
-				}
-			}(*handler)
-			continue
-		}
-
-		// run synchronously
 		err := handler.Log(entry)
 		if err != nil {
 			return fmt.Errorf("cannot write log entry: %v", err)

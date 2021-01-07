@@ -27,7 +27,7 @@ func NewLogstashHandler() LogstashHandler {
 	}
 }
 
-func (config LogstashHandler) Parse() (*Handler, error) {
+func (config LogstashHandler) Parse() (Handler, error) {
 	conn, err := net.Dial(config.Network, config.Address)
 	if err != nil {
 		return nil, err
@@ -45,7 +45,7 @@ func (config LogstashHandler) Parse() (*Handler, error) {
 	if err != nil {
 		return nil, err
 	}
-	h.hook = hook
+	h.SetHook(hook)
 	return h, nil
 }
 
@@ -53,7 +53,7 @@ func init() {
 	RegisterParser("logstash", func(
 		meta toml.MetaData,
 		primitive toml.Primitive,
-	) (*Handler, error) {
+	) (Handler, error) {
 		fconf := NewLogstashHandler()
 		err := meta.PrimitiveDecode(primitive, &fconf)
 		if err != nil {

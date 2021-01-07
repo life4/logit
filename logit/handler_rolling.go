@@ -32,7 +32,7 @@ func NewRollingHandler() RollingHandler {
 	}
 }
 
-func (config RollingHandler) Parse() (*Handler, error) {
+func (config RollingHandler) Parse() (Handler, error) {
 	writer := &lumberjack.Logger{
 		Filename:   config.File,
 		MaxSize:    config.MaxSize,
@@ -45,8 +45,8 @@ func (config RollingHandler) Parse() (*Handler, error) {
 	if err != nil {
 		return nil, err
 	}
-	h.formatter = &logrus.TextFormatter{}
-	h.stream = writer
+	h.SetFormatter(&logrus.TextFormatter{})
+	h.SetStream(writer)
 	return h, nil
 }
 
@@ -54,7 +54,7 @@ func init() {
 	RegisterParser("rolling", func(
 		meta toml.MetaData,
 		primitive toml.Primitive,
-	) (*Handler, error) {
+	) (Handler, error) {
 		fconf := NewRollingHandler()
 		err := meta.PrimitiveDecode(primitive, &fconf)
 		if err != nil {
@@ -68,7 +68,16 @@ func init() {
 		if err != nil {
 			return nil, err
 		}
-		handler.formatter = subhandler.formatter
+
+		switch h := subhandler.(type) {
+		case *HandlerAsync:
+			handler.SetFormatter(h.handler.formatter)
+		case *HandlerSync:
+			handler.SetFormatter(h.formatter)
+		default:
+			panic("unreachable")
+		}
+
 		return handler, nil
 	})
 }

@@ -34,7 +34,7 @@ func NewRedisHandler() RedisHandler {
 	}
 }
 
-func (config RedisHandler) Parse() (*Handler, error) {
+func (config RedisHandler) Parse() (Handler, error) {
 	hook, err := logredis.NewHook(logredis.HookConfig{
 		Hostname: config.SourceHost,
 		Port:     config.Port,
@@ -55,7 +55,7 @@ func (config RedisHandler) Parse() (*Handler, error) {
 	if err != nil {
 		return nil, err
 	}
-	h.hook = hook
+	h.SetHook(hook)
 	return h, nil
 }
 
@@ -63,7 +63,7 @@ func init() {
 	RegisterParser("redis", func(
 		meta toml.MetaData,
 		primitive toml.Primitive,
-	) (*Handler, error) {
+	) (Handler, error) {
 		fconf := NewRedisHandler()
 		err := meta.PrimitiveDecode(primitive, &fconf)
 		if err != nil {

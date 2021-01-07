@@ -23,7 +23,7 @@ func NewMongoDBHandler() MongoDBHandler {
 	}
 }
 
-func (config MongoDBHandler) Parse() (*Handler, error) {
+func (config MongoDBHandler) Parse() (Handler, error) {
 	hook, err := mgorus.NewHooker(config.URL, config.DB, config.Collection)
 	if err != nil {
 		return nil, err
@@ -32,7 +32,7 @@ func (config MongoDBHandler) Parse() (*Handler, error) {
 	if err != nil {
 		return nil, err
 	}
-	h.hook = hook
+	h.SetHook(hook)
 	return h, nil
 }
 
@@ -40,7 +40,7 @@ func init() {
 	RegisterParser("mongodb", func(
 		meta toml.MetaData,
 		primitive toml.Primitive,
-	) (*Handler, error) {
+	) (Handler, error) {
 		fconf := NewMongoDBHandler()
 		err := meta.PrimitiveDecode(primitive, &fconf)
 		if err != nil {

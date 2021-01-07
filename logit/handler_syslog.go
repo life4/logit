@@ -26,7 +26,7 @@ func NewSysLogHandler() SysLogHandler {
 	}
 }
 
-func (config SysLogHandler) Parse() (*Handler, error) {
+func (config SysLogHandler) Parse() (Handler, error) {
 	priority, err := config.parsedPriority()
 	if err != nil {
 		return nil, err
@@ -44,7 +44,7 @@ func (config SysLogHandler) Parse() (*Handler, error) {
 	if err != nil {
 		return nil, err
 	}
-	h.hook = hook
+	h.SetHook(hook)
 	return h, nil
 }
 
@@ -74,7 +74,7 @@ func init() {
 	RegisterParser("syslog", func(
 		meta toml.MetaData,
 		primitive toml.Primitive,
-	) (*Handler, error) {
+	) (Handler, error) {
 		fconf := NewSysLogHandler()
 		err := meta.PrimitiveDecode(primitive, &fconf)
 		if err != nil {

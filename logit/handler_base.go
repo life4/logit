@@ -14,7 +14,7 @@ type BaseHandler struct {
 	LevelTo   string `toml:"level_to"`
 	File      string
 	Mode      os.FileMode
-	Async     bool
+	Workers   int
 }
 
 func NewBaseHandler() BaseHandler {
@@ -22,11 +22,11 @@ func NewBaseHandler() BaseHandler {
 		LevelFrom: "trace",
 		LevelTo:   "panic",
 		File:      "stdout",
-		Async:     false,
+		Workers:   1,
 	}
 }
 
-func (config BaseHandler) Parse() (*Handler, error) {
+func (config BaseHandler) Parse() (Handler, error) {
 	lfrom, err := logrus.ParseLevel(config.LevelFrom)
 	if err != nil {
 		return nil, err
@@ -53,11 +53,19 @@ func (config BaseHandler) Parse() (*Handler, error) {
 		}
 	}
 
-	h := Handler{
+	hSync := HandlerSync{
 		stream:    stream,
 		levelFrom: lfrom,
 		levelTo:   lto,
-		Async:     config.Async,
 	}
-	return &h, nil
+
+	if config.Workers > 1 {
+		hAsync := HandlerAsync{
+			workers: config.Workers,
+			handler: hSync,
+		}
+		return &hAsync, nil
+	}
+
+	return &hSync, nil
 }

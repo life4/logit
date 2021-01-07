@@ -25,7 +25,7 @@ func NewSlackHandler() SlackHandler {
 	}
 }
 
-func (config SlackHandler) Parse() (*Handler, error) {
+func (config SlackHandler) Parse() (Handler, error) {
 	hook := slackrus.SlackrusHook{
 		HookURL:        config.HookURL,
 		AcceptedLevels: slackrus.LevelThreshold(logrus.TraceLevel),
@@ -38,7 +38,7 @@ func (config SlackHandler) Parse() (*Handler, error) {
 	if err != nil {
 		return nil, err
 	}
-	h.hook = &hook
+	h.SetHook(&hook)
 	return h, nil
 }
 
@@ -46,7 +46,7 @@ func init() {
 	RegisterParser("slack", func(
 		meta toml.MetaData,
 		primitive toml.Primitive,
-	) (*Handler, error) {
+	) (Handler, error) {
 		fconf := NewSlackHandler()
 		err := meta.PrimitiveDecode(primitive, &fconf)
 		if err != nil {

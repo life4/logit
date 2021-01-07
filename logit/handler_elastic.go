@@ -27,7 +27,7 @@ func NewElasticHandler() ElasticHandler {
 	}
 }
 
-func (config ElasticHandler) Parse() (*Handler, error) {
+func (config ElasticHandler) Parse() (Handler, error) {
 	client, err := elastic.NewClient(elastic.SetURL(config.URLs...))
 	if err != nil {
 		return nil, err
@@ -50,7 +50,7 @@ func (config ElasticHandler) Parse() (*Handler, error) {
 	if err != nil {
 		return nil, err
 	}
-	h.hook = hook
+	h.SetHook(hook)
 	return h, nil
 }
 
@@ -58,7 +58,7 @@ func init() {
 	RegisterParser("elastic", func(
 		meta toml.MetaData,
 		primitive toml.Primitive,
-	) (*Handler, error) {
+	) (Handler, error) {
 		fconf := NewElasticHandler()
 		err := meta.PrimitiveDecode(primitive, &fconf)
 		if err != nil {

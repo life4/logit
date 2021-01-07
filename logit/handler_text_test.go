@@ -55,7 +55,7 @@ func Test_TextHandler(t *testing.T) {
 			h, err := ParseHandler(m, p)
 			is.Nil(err)
 			var b bytes.Buffer
-			h.stream = &b
+			h.SetStream(&b)
 			err = h.Log(&e)
 			is.Nil(err)
 			actual := b.String()

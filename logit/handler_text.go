@@ -23,7 +23,7 @@ func NewTextHandler() TextHandler {
 	}
 }
 
-func (config TextHandler) Parse() (*Handler, error) {
+func (config TextHandler) Parse() (Handler, error) {
 	f := logrus.TextFormatter{
 		ForceColors:            true,
 		DisableSorting:         !config.Sort,
@@ -37,7 +37,7 @@ func (config TextHandler) Parse() (*Handler, error) {
 	if err != nil {
 		return nil, err
 	}
-	h.formatter = &f
+	h.SetFormatter(&f)
 	return h, nil
 }
 
@@ -45,7 +45,7 @@ func init() {
 	RegisterParser("text", func(
 		meta toml.MetaData,
 		primitive toml.Primitive,
-	) (*Handler, error) {
+	) (Handler, error) {
 		fconf := NewTextHandler()
 		err := meta.PrimitiveDecode(primitive, &fconf)
 		if err != nil {

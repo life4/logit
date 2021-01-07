@@ -24,7 +24,7 @@ func NewSentryHandler() SentryHandler {
 	}
 }
 
-func (config SentryHandler) Parse() (*Handler, error) {
+func (config SentryHandler) Parse() (Handler, error) {
 	allLevels := []logrus.Level{
 		logrus.PanicLevel,
 		logrus.FatalLevel,
@@ -48,7 +48,7 @@ func (config SentryHandler) Parse() (*Handler, error) {
 	if err != nil {
 		return nil, err
 	}
-	h.hook = hook
+	h.SetHook(hook)
 	return h, nil
 }
 
@@ -56,7 +56,7 @@ func init() {
 	RegisterParser("sentry", func(
 		meta toml.MetaData,
 		primitive toml.Primitive,
-	) (*Handler, error) {
+	) (Handler, error) {
 		fconf := NewSentryHandler()
 		err := meta.PrimitiveDecode(primitive, &fconf)
 		if err != nil {

@@ -21,7 +21,7 @@ func NewJSONHandler() JSONHandler {
 	}
 }
 
-func (config JSONHandler) Parse() (*Handler, error) {
+func (config JSONHandler) Parse() (Handler, error) {
 	f := logrus.JSONFormatter{
 		DataKey:         config.DataKey,
 		TimestampFormat: convertDateFormat(config.Timestamp),
@@ -30,7 +30,7 @@ func (config JSONHandler) Parse() (*Handler, error) {
 	if err != nil {
 		return nil, err
 	}
-	h.formatter = &f
+	h.SetFormatter(&f)
 	return h, nil
 }
 
@@ -38,7 +38,7 @@ func init() {
 	RegisterParser("json", func(
 		meta toml.MetaData,
 		primitive toml.Primitive,
-	) (*Handler, error) {
+	) (Handler, error) {
 		fconf := NewJSONHandler()
 		err := meta.PrimitiveDecode(primitive, &fconf)
 		if err != nil {

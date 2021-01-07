@@ -24,7 +24,7 @@ func NewFluentdHandler() FluentdHandler {
 	}
 }
 
-func (config FluentdHandler) Parse() (*Handler, error) {
+func (config FluentdHandler) Parse() (Handler, error) {
 	hook, err := logrus_fluent.NewWithConfig(logrus_fluent.Config{
 		Host:     config.Host,
 		Port:     config.Port,
@@ -38,7 +38,7 @@ func (config FluentdHandler) Parse() (*Handler, error) {
 	if err != nil {
 		return nil, err
 	}
-	h.hook = hook
+	h.SetHook(hook)
 	return h, nil
 }
 
@@ -46,7 +46,7 @@ func init() {
 	RegisterParser("fluentd", func(
 		meta toml.MetaData,
 		primitive toml.Primitive,
-	) (*Handler, error) {
+	) (Handler, error) {
 		fconf := NewFluentdHandler()
 		err := meta.PrimitiveDecode(primitive, &fconf)
 		if err != nil {

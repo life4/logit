@@ -20,13 +20,13 @@ func NewGraylogHandler() GraylogHandler {
 	}
 }
 
-func (config GraylogHandler) Parse() (*Handler, error) {
+func (config GraylogHandler) Parse() (Handler, error) {
 	hook := graylog.NewGraylogHook(config.Address, map[string]interface{}{})
 	h, err := config.BaseHandler.Parse()
 	if err != nil {
 		return nil, err
 	}
-	h.hook = hook
+	h.SetHook(hook)
 	return h, nil
 }
 
@@ -34,7 +34,7 @@ func init() {
 	RegisterParser("graylog", func(
 		meta toml.MetaData,
 		primitive toml.Primitive,
-	) (*Handler, error) {
+	) (Handler, error) {
 		fconf := NewGraylogHandler()
 		err := meta.PrimitiveDecode(primitive, &fconf)
 		if err != nil {

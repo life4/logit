@@ -21,7 +21,7 @@ func NewLogFmtHandler() LogFmtHandler {
 	}
 }
 
-func (config LogFmtHandler) Parse() (*Handler, error) {
+func (config LogFmtHandler) Parse() (Handler, error) {
 	f := logrus.TextFormatter{
 		DisableColors:   true,
 		DisableSorting:  !config.Sort,
@@ -33,7 +33,7 @@ func (config LogFmtHandler) Parse() (*Handler, error) {
 	if err != nil {
 		return nil, err
 	}
-	h.formatter = &f
+	h.SetFormatter(&f)
 	return h, nil
 }
 
@@ -41,7 +41,7 @@ func init() {
 	RegisterParser("logfmt", func(
 		meta toml.MetaData,
 		primitive toml.Primitive,
-	) (*Handler, error) {
+	) (Handler, error) {
 		fconf := NewLogFmtHandler()
 		err := meta.PrimitiveDecode(primitive, &fconf)
 		if err != nil {
