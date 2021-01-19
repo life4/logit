@@ -88,7 +88,7 @@ There are some good libraries that you can use in your application to produce JS
 * Go:
   * [onelog](https://github.com/francoispqt/onelog): fastest.
   * [logrus](github.com/sirupsen/logrus): most popular.
-Node.js:
+* Node.js:
   * [bunyan](https://github.com/trentm/node-bunyan)
 * Python:
   * [structlog](https://github.com/hynek/structlog): powerful.
