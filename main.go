@@ -6,7 +6,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/orsinium-labs/logit/logit"
+	"github.com/life4/logit/logit"
 	"github.com/spf13/pflag"
 )
 

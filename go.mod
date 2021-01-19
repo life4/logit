@@ -1,4 +1,4 @@
-module github.com/orsinium-labs/logit
+module github.com/life4/logit
 
 go 1.15
 

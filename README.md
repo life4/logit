@@ -40,13 +40,13 @@ Supported handlers:
 The project is "go gettable":
 
 ```bash
-go get github.com/orsinium-labs/logit
+go get github.com/life4/logit
 ```
 
 The best practice for your production is to build a minimal binary with only handlers you need:
 
 ```bash
-git clone https://github.com/orsinium-labs/logit.git
+git clone https://github.com/life4/logit.git
 cd logit
 go build -tags 'h_clean,h_aws,h_gcloud' -o logit.bin .
 ```
