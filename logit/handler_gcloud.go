@@ -3,16 +3,51 @@
 package logit
 
 import (
+	"context"
 	"fmt"
 
+	"cloud.google.com/go/logging"
 	"github.com/BurntSushi/toml"
-	"github.com/kenshaw/sdhook"
+	"github.com/sirupsen/logrus"
+	"google.golang.org/api/option"
 )
+
+var gCloudLevels = map[logrus.Level]logging.Severity{
+	logrus.TraceLevel: logging.Debug,
+	logrus.DebugLevel: logging.Debug,
+	logrus.InfoLevel:  logging.Info,
+	logrus.WarnLevel:  logging.Warning,
+	logrus.ErrorLevel: logging.Error,
+	logrus.FatalLevel: logging.Critical,
+	logrus.PanicLevel: logging.Alert,
+}
+
+type GCloudHook struct {
+	logger *logging.Logger
+	labels map[string]string
+}
+
+func (*GCloudHook) Levels() []logrus.Level {
+	return logrus.AllLevels
+}
+func (h *GCloudHook) Fire(entry *logrus.Entry) error {
+	ctx := context.Background()
+	return h.logger.LogSync(ctx, logging.Entry{
+		Timestamp: entry.Time,
+		Severity:  gCloudLevels[entry.Level],
+		Labels:    h.labels,
+		Payload: map[string]interface{}{
+			"message": entry.Message,
+			"data":    entry.Data,
+		},
+	})
+}
 
 type GCloudHandler struct {
 	BaseHandler
 	Credentials string
-	Service     string
+	Endpoint    string
+	Labels      map[string]string
 	LogName     string `toml:"log_name"`
 	ProjectId   string `toml:"project_id"`
 }
@@ -24,22 +59,22 @@ func NewGCloudHandler() GCloudHandler {
 }
 
 func (config GCloudHandler) Parse() (Handler, error) {
-	options := []sdhook.Option{
-		sdhook.GoogleServiceAccountCredentialsFile(config.Credentials),
+	opts := make([]option.ClientOption, 0)
+	if config.Credentials != "" {
+		opts = append(opts, option.WithCredentialsFile(config.Credentials))
 	}
-	if config.Service != "" {
-		options = append(options, sdhook.ErrorReportingService(config.Service))
-	}
-	if config.LogName != "" {
-		options = append(options, sdhook.LogName(config.LogName))
-	}
-	if config.ProjectId != "" {
-		options = append(options, sdhook.ProjectID(config.ProjectId))
+	if config.Endpoint != "" {
+		opts = append(opts, option.WithEndpoint(config.Endpoint))
 	}
 
-	hook, err := sdhook.New(options...)
+	ctx := context.Background()
+	client, err := logging.NewClient(ctx, config.ProjectId, opts...)
 	if err != nil {
-		return nil, fmt.Errorf("cannot create gcloud hook: %v", err)
+		return nil, err
+	}
+	hook := &GCloudHook{
+		logger: client.Logger(config.LogName),
+		labels: config.Labels,
 	}
 
 	h, err := config.BaseHandler.Parse()
@@ -47,18 +82,7 @@ func (config GCloudHandler) Parse() (Handler, error) {
 		return nil, err
 	}
 	h.SetHook(hook)
-
-	// TODO: sdhook is always async. Can we force it to be sync?
-	// Contribute? The project seems dead.
-	switch handler := h.(type) {
-	case *HandlerAsync:
-		handler.handler.wait = hook.Wait
-		return &handler.handler, nil
-	case *HandlerSync:
-		handler.wait = hook.Wait
-		return handler, nil
-	}
-	panic("unreachable")
+	return h, nil
 }
 
 func init() {

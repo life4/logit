@@ -95,10 +95,11 @@
 * desc: send logs into [Google Cloud Logging](https://cloud.google.com/logging/) (ex StackDriver).
 * slug: `gcloud`
 * build tag: `h_clean,h_gcloud`
-* core: [sdhook](https://github.com/kenshaw/sdhook)
+* core: [google-cloud-go](https://github.com/googleapis/google-cloud-go)
 * fields:
-  * `credentials` (string)
-  * `service` (string)
+  * `credentials` (string): path to credentials file.
+  * `endpoint` (string)
+  * `labels` (table string to string)
   * `log_name` (string)
   * `project_id` (string)
 

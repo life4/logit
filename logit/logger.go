@@ -36,10 +36,11 @@ func (log Logger) SafeParse(line string) *logrus.Entry {
 	if err != nil {
 		err = fmt.Errorf("cannot parse entry: %v", err)
 		entry = logrus.NewEntry(nil)
-		entry = entry.WithField("error", err.Error())
 		entry.Level = log.Levels.Error
 		entry.Message = line
 		entry.Time = log.now()
+		entry.Data = copyFields(log.Defaults)
+		entry = entry.WithField("error", err.Error())
 	}
 	return entry
 }
@@ -51,12 +52,12 @@ func (log Logger) Parse(line string) (*logrus.Entry, error) {
 		entry.Level = log.Levels.Default
 		entry.Message = line
 		entry.Time = log.now()
-		entry.Data = log.Defaults
+		entry.Data = copyFields(log.Defaults)
 		return entry, nil
 	}
 
 	e := logrus.NewEntry(nil)
-	e.Data = logrus.Fields(log.Defaults)
+	e.Data = copyFields(log.Defaults)
 
 	err := json.Unmarshal([]byte(line), &e.Data)
 	if err != nil {
@@ -122,4 +123,12 @@ func (log Logger) Log(entry *logrus.Entry) error {
 		}
 	}
 	return nil
+}
+
+func copyFields(input logrus.Fields) logrus.Fields {
+	output := make(logrus.Fields)
+	for k, v := range input {
+		output[k] = v
+	}
+	return output
 }
