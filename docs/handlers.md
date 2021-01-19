@@ -100,7 +100,7 @@
   * `credentials` (string): path to credentials file.
   * `endpoint` (string)
   * `labels` (table string to string)
-  * `log_name` (string)
+  * `log_name` (string, `"logit"`)
   * `project_id` (string)
 
 ## Graylog

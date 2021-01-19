@@ -55,6 +55,7 @@ type GCloudHandler struct {
 func NewGCloudHandler() GCloudHandler {
 	return GCloudHandler{
 		BaseHandler: NewBaseHandler(),
+		LogName:     "logit",
 	}
 }
 
