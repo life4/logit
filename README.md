@@ -93,5 +93,5 @@ There are some good libraries that you can use in your application to produce JS
 * Python:
   * [structlog](https://github.com/hynek/structlog): powerful.
   * [python-json-logger](https://github.com/madzak/python-json-logger): formatter for the default [logging](https://docs.python.org/3/library/logging.html).
-Rust:
+* Rust:
   * [slog-json](https://github.com/slog-rs/json) for [slog-rs](https://github.com/slog-rs/slog).
